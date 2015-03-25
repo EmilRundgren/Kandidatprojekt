@@ -161,7 +161,7 @@ global EditImage Regret
 %if (isempty(Regret))
 %    msgbox(['Det finns ingen bild att modifiera'], 'FELMEDDELANDE')
 %else
-choice = menu('Välj SNus','Gaussiskt','Poisson','Salt & Peppar');
+choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Peppar');
 if (choice == 1)
     workmenu
     EditImage =imnoise(Regret, 'gaussian');
