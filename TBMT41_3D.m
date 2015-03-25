@@ -80,11 +80,14 @@ a = dir(PathName);
 nfile = length(a);
 cd(PathName)
 for i=1:nfile
-    if (a.isdir)
-info=dicominfo(a(i).name); 
- Original_Image(:,:,i) = dicomread(info);
+    if (not(a(i).isdir))
+    info=dicominfo(a(i).name); 
+    Original_Image(:,:,i) = dicomread(info);
+RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
+    
     end
 end
+
 % hObject    handle to Open_Image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
