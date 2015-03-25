@@ -76,9 +76,9 @@ function laddaInBild_Callback(hObject, eventdata, handles)
 global RescaledImage OriginalImage Regret;
 %clearvars -global OriginalImage EditImage;
 RescaledImage = [];
-OriginalImage = [];
+OriginalImage = []; 
 Regret = [];
-[FileName, PathName] = uigetfile('*.dcm','browse');
+[FileName,PathName] = uigetfile('*.dcm','browse');
 cd(PathName);
 info = dicominfo(FileName);
 OriginalImage = dicomread(info);

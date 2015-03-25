@@ -22,7 +22,7 @@ function varargout = STARTSCREEN(varargin)
 
 % Edit the above text to modify the response to help STARTSCREEN
 
-% Last Modified by GUIDE v2.5 25-Feb-2015 10:59:29
+% Last Modified by GUIDE v2.5 25-Mar-2015 12:33:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,18 +73,18 @@ function varargout = STARTSCREEN_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in DUBBLAD.
-function DUBBLAD_Callback(hObject, eventdata, handles)
+% --- Executes on button press in TWOD.
+function TWOD_Callback(hObject, eventdata, handles)
 close();
 
 TBMT41_2D
-% hObject    handle to DUBBLAD (see GCBO)
+% hObject    handle to TWOD (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in TRED.
-function TRED_Callback(hObject, eventdata, handles)
-% hObject    handle to TRED (see GCBO)
+% --- Executes on button press in THREED.
+function THREED_Callback(hObject, eventdata, handles)
+% hObject    handle to THREED (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
