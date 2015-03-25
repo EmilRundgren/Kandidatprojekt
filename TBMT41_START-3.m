@@ -22,16 +22,16 @@ function varargout = TBMT41_START(varargin)
 
 % Edit the above text to modify the response to help TBMT41_START
 
-% Last Modified by GUIDE v2.5 18-Feb-2015 12:51:43
+% Last Modified by GUIDE v2.5 18-Feb-2015 14:26:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @TBMT41_START_OpeningFcn, ...
-                   'gui_OutputFcn',  @TBMT41_START_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @TBMT41_START_OpeningFcn, ...
+    'gui_OutputFcn',  @TBMT41_START_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -61,7 +61,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = TBMT41_START_OutputFcn(hObject, eventdata, handles) 
+function varargout = TBMT41_START_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -73,9 +73,7 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in OpenImage.
 function OpenImage_Callback(hObject, eventdata, handles)
-global RescaledImage
-global OriginalImage
-global Regret
+global RescaledImage OriginalImage Regret
 [FileName,PathName]= uigetfile('*.dcm','browse');
 cd(PathName);
 info=dicominfo(FileName);
@@ -104,8 +102,7 @@ imcontrast;
 
 % --- Executes on button press in jamformedoriginal.
 function jamformedoriginal_Callback(hObject, eventdata, handles)
-global RescaledImage
-global EditImage
+global RescaledImage EditImage
 set(figure, 'Position', [100, 100, 1049, 895]);
 axes('Position',[0,0,0.5,1])
 imshow(EditImage ,[] );
@@ -121,8 +118,7 @@ imshow(RescaledImage, []);
 
 % --- Executes on button press in Atergatilloriginal.
 function Atergatilloriginal_Callback(hObject, eventdata, handles)
-global RescaledImage
-global Regret
+global RescaledImage Regret
 Regret = RescaledImage;
 imshow(RescaledImage, []);
 % hObject    handle to Atergatilloriginal (see GCBO)
@@ -132,9 +128,9 @@ imshow(RescaledImage, []);
 
 % --- Executes on button press in Utvardera.
 function Utvardera_Callback(hObject, eventdata, handles)
-global RescaledImage
-global EditImage
-PSNR = psnr(EditImage,RescaledImage)
+global RescaledImage EditImage
+PSNR = psnr(EditImage,RescaledImage);
+msgbox(['PSNR = ' num2str(PSNR)], 'Utvärdering')
 
 % hObject    handle to Utvardera (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -143,28 +139,28 @@ PSNR = psnr(EditImage,RescaledImage)
 
 % --- Executes on button press in laggtillbrus.
 function laggtillbrus_Callback(hObject, eventdata, handles)
-global EditImage
-global Regret
-choice = menu('Choose noise','Gaussian','Poisson','Salt & Pepper');
+global EditImage Regret
+choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Peppar');
 if (choice == 1)
     workmenu
     EditImage =imnoise(Regret, 'gaussian');
     imshow(EditImage, []);
-    Regret = EditImage;
 end
 if (choice == 2)
+    def = {'10'};
+    x = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
+    x = str2double(x);
     workmenu
-    EditImage = imnoise(Regret, 'poisson');
+    EditImage =(10^(x)) * imnoise(Regret/(10^(x)), 'poisson');
     imshow(EditImage, []);
-    Regret = EditImage;
 end
 if (choice == 3)
-    x = inputdlg('Ange intensitet');
+    def = {'0.05'};
+    x = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
     answer = str2double(x);
-workmenu
+    workmenu
     EditImage = imnoise(Regret, 'Salt & Pepper', answer);
     imshow(EditImage, []);
-    Regret = EditImage;
 end
 
 
@@ -174,43 +170,43 @@ f=figure('MenuBar','None');
 
 
 %Create pop up menu
-pp=uicontrol(f,'Style','Pushbutton','string',{'OK'},...
-'pos',[0 250 100 20], ...
-'Callback', @imageview);
-pp2=uicontrol(f,'Style','Pushbutton','string',{'NO'},...
-'pos',[0 200 100 20], ...
-'Callback' , @imagedelete);
+pp=uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
+    'pos',[0 250 100 20], ...
+    'Callback', @imageview);
+pp2=uicontrol(f,'Style','Pushbutton','string',{'Ångra'},...
+    'pos',[0 200 100 20], ...
+    'Callback' , @imagedelete);
 
 function imageview(src, callbackdata)
-global EditImage
+global EditImage Regret
+Regret = EditImage;
 delete(gcf)
 imshow(EditImage, []);
 function imagedelete(src,callbackdata)
 global EditImage
 global Regret
-% Close request function 
-%to display a question dialog box 
-   selection = questdlg('Är du säker på att du vill ångra detta steg',...
-      'Close Request Function',...
-      'Ja','Nej','Ja'); 
-   switch selection, 
-      case 'Ja',
-          EditImage=Regret;
-         delete(gcf)
-      case 'Nej'
-      return 
-   end
+% Close request function
+%to display a question dialog box
+selection = questdlg('Är du säker på att du vill ångra detta steg',...
+    'Close Request Function',...
+    'Ja','Nej','Ja');
+switch selection,
+    case 'Ja',
+        EditImage=Regret;
+        delete(gcf)
+    case 'Nej'
+        return
+end
 
 function []=newopen(varargin)
-    workmenu
-   
-    
+workmenu
+
+
 
 
 % --- Executes on button press in Filter.
 function Filter_Callback(hObject, eventdata, handles)
-global EditImage
-global Regret
+global EditImage  Regret
 if (isempty(EditImage))
     X = Regret;
 else
@@ -219,21 +215,48 @@ end
 
 choice = menu('Choose filter','Wiener filtrering','Linjär filtrering');
 if (choice == 1)
-    x = inputdlg('Ange parameter');
+    def = {'3'};
+    x = inputdlg('Ange parameter (vanligtvis mellan 1-10', 'Parametervärde', 1, def);
     answer = str2double(x);
     workmenu
     EditImage = wiener2(X,[answer answer]);
     imshow(EditImage, []);
 end
 if (choice == 2)
-    x = inputdlg('Ange parameter');
+    def = {'2'};
+    x = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
     answer = str2double(x);
+    matrix = matrisfix(answer);
     workmenu
-    h = [0.25 , 0.5 , 0.25 ; 0.5 , 1 , 0.5 ; 0.25 , 0.5 , 0.25];
-    EditImage = conv2(X,h);
+    %h = [0.25 , 0.5 , 0.25 ; 0.5 , 1 , 0.5 ; 0.25 , 0.5 , 0.25];
+    EditImage = conv2(X,matrix, 'Same');
     imshow(EditImage, []);
 end
 
 % hObject    handle to Filter (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+% --- Executes on button press in Spara.
+function Spara_Callback(hObject, eventdata, handles)
+global EditImage Regret
+if (isempty (EditImage))
+    X = Regret;
+else
+    X = EditImage;
+end
+
+choice = menu('Välj format som filen sparas i', 'DICOM', 'JPEG');
+if (choice ==1)
+    FileName = uiputfile('*.dcm');
+    dicomwrite(X, FileName);
+end
+if (choice == 2)
+    FileName =uiputfile('*.jpg');
+    imwrite(X, FileName);
+end
+% hObject    handle to Spara (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
