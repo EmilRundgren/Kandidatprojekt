@@ -213,7 +213,7 @@ else
     X = EditImage;
 end
 
-choice = menu('Choose filter','Wiener filtrering','Linjär filtrering');
+choice = menu('Choose filter','Wienerkorv filtrering','Linjär filtrering');
 if (choice == 1)
     def = {'3'};
     x = inputdlg('Ange parameter (vanligtvis mellan 1-10', 'Parametervärde', 1, def);
