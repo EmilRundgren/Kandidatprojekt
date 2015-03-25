@@ -146,7 +146,8 @@ if (isempty(RescaledImage) || isempty(EditImage))
     warndlg('Inget att utvärdera');
 else
 PSNR = psnr(EditImage,RescaledImage);
-msgbox(['PSNR = ' num2str(PSNR)], 'Utvärdering')
+SSIM = ssim(EditImage, RescaledImage);
+msgbox({['PSNR = ' num2str(PSNR)] ['SSIM = ' num2str(SSIM)]}, 'Utvärdering')
 end
 
 % hObject    handle to utvardera (see GCBO)
