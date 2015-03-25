@@ -76,9 +76,9 @@ function laddaInBild_Callback(hObject, eventdata, handles)
 global RescaledImage OriginalImage Regret;
 %clearvars -global OriginalImage EditImage;
 RescaledImage = [];
-OriginalImage = []; 
+OriginalImage = [];
 Regret = [];
-[FileName,PathName] = uigetfile('*.dcm','browse');
+[FileName, PathName] = uigetfile('*.dcm','browse');
 cd(PathName);
 info = dicominfo(FileName);
 OriginalImage = dicomread(info);
@@ -126,11 +126,12 @@ end
 
 % --- Executes on button press in atergaTillOriginal.
 function atergaTillOriginal_Callback(hObject, eventdata, handles)
-global RescaledImage Regret
+global RescaledImage Regret EditImage
 if (isempty(RescaledImage))
     warndlg('Inget att ångra')
 else
 Regret = RescaledImage;
+EditImage = RescaledImage;
 imshow(RescaledImage, []);
 end
 % hObject    handle to atergaTillOriginal (see GCBO)
@@ -227,8 +228,6 @@ function []=newopen(varargin)
 workmenu
 
 
-
-
 % --- Executes on button press in filtreraBrus.
 function filtreraBrus_Callback(hObject, eventdata, handles)
 global EditImage Regret
@@ -253,7 +252,7 @@ if (choice == 2)
     if(answer > 0)
     matrix = matrisfix(answer);
     workmenu
-    EditImage = conv2(Regret,matrix, 'Same');
+    EditImage = conv2(Regret,matrix, 'same');
     end
     imshow(EditImage, []);
 end
@@ -280,7 +279,7 @@ if (choice ==1)
     dicomwrite(X, FileName);
 end
 if (choice == 2)
-    FileName =uiputfile('*.jpg');
+    FileName = uiputfile('*.jpg');
     imwrite(X, FileName);
 end
 % hObject    handle to spara (see GCBO)
@@ -316,6 +315,7 @@ function segmentera_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in avsluta.
 function avsluta_Callback(hObject, eventdata, handles)
+close();
 % hObject    handle to avsluta (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
