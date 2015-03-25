@@ -9,7 +9,7 @@ if opt==1
     info=dicominfo('IM-0001-0012.dcm');
 Y = dicomread(info);
 img = im2double(Y);
-    ncluster=3; %Användaren får välja antal kluster, mellan 2-5
+    ncluster=4; %Användaren får välja antal kluster, mellan 2-5
 elseif opt==2
     info=dicominfo('IM-0001-0011.dcm');
     Y = dicomread(info);
