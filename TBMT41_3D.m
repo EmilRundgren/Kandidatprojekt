@@ -22,7 +22,7 @@ function varargout = TBMT41_3D(varargin)
 
 % Edit the above text to modify the response to help TBMT41_3D
 
-% Last Modified by GUIDE v2.5 25-Mar-2015 10:49:18
+% Last Modified by GUIDE v2.5 25-Mar-2015 12:32:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,6 +75,7 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in Open_Image.
 function Open_Image_Callback(hObject, eventdata, handles)
+global RescaledImage
 PathName= uigetdir;
 a = dir(PathName);
 nfile = length(a);
@@ -82,11 +83,11 @@ cd(PathName)
 for i=1:nfile
     if (not(a(i).isdir))
     info=dicominfo(a(i).name); 
-    Original_Image(:,:,i) = dicomread(info);
-RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
-    
+    OriginalImage(:,:,i) = dicomread(info);
+    RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
     end
 end
+vol3d('cdata', RescaledImage(:,:,:), 'texture', '3D');
 
 % hObject    handle to Open_Image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -96,5 +97,16 @@ end
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in Examine_Image.
+function Examine_Image_Callback(hObject, eventdata, handles)
+global RescaledImage
+figure('units','normalized','outerposition',[0 0 1 1])
+vol3d('cdata', RescaledImage, 'texture', '3D');
+
+% hObject    handle to Examine_Image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
