@@ -75,7 +75,7 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in Open_Image.
 function Open_Image_Callback(hObject, eventdata, handles)
-global RescaledImage
+global RescaledImage voxel_size
 PathName= uigetdir;
 a = dir(PathName);
 nfile = length(a);
@@ -87,7 +87,25 @@ for i=1:nfile
     RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
     end
 end
-vol3d('cdata', RescaledImage(:,:,:), 'texture', '3D');
+voxel_size = info.PixelSpacing;
+slice_resolution = size(RescaledImage(:,:,1));
+vol3d('cdata', RescaledImage, 'texture', '3D');
+%colormap(jet(256));
+%     alphamap('rampup');
+%     alphamap(0.4*alphamap);
+ %set(gca, 'DataAspectRatio', 1./voxel_size);
+ set(gca, 'Color', [0 0 0]);
+ set(gca, 'zdir', 'reverse');
+ xlabel('X [mm]', 'FontSize', 15);
+ ylabel('Y [mm]', 'FontSize', 15);
+ zlabel('Z [mm]', 'FontSize', 15);
+ set(gca, 'xtick', [0:10:slice_resolution(1)]);
+ set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+ set(gca, 'ytick', [0:10:slice_resolution(2)]);
+ set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+ set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+ set(gca, 'zticklabel', [0:10:size(RescaledImage, 3)]*voxel_size(3));
+ drawnow;
 
 % hObject    handle to Open_Image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -103,9 +121,22 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in Examine_Image.
 function Examine_Image_Callback(hObject, eventdata, handles)
-global RescaledImage
-figure('units','normalized','outerposition',[0 0 1 1])
+global RescaledImage voxel_size slice_resolution
+h = figure('units','normalized','outerposition',[0 0 1 1]);
 vol3d('cdata', RescaledImage, 'texture', '3D');
+ set(gca, 'Color', [0 0 0]);
+ set(gca, 'zdir', 'reverse');
+ xlabel('X [mm]', 'FontSize', 15);
+ ylabel('Y [mm]', 'FontSize', 15);
+ zlabel('Z [mm]', 'FontSize', 15);
+ set(gca, 'xtick', [0:10:slice_resolution(1)]);
+ set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+ set(gca, 'ytick', [0:10:slice_resolution(2)]);
+ set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+ set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+ set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
+ drawnow;
+
 
 % hObject    handle to Examine_Image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
