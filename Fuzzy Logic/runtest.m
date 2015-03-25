@@ -14,7 +14,7 @@ elseif opt==2
     info=dicominfo('IM-0001-0011.dcm');
     Y = dicomread(info);
     img = im2double(Y);
-    ncluster=5;
+    ncluster=4;
 else
     error('Invalid opt: 1 or 2 only!')
 end
