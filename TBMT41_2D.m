@@ -151,9 +151,10 @@ end
 % --- Knappen 'Lägg till brus'. 
 function laggTillBrus_Callback(hObject, eventdata, handles)
 global EditImage Regret
-%if (isempty(Regret))
-%    msgbox(['Det finns ingen bild att modifiera'], 'FELMEDDELANDE')
-%else
+
+if (isempty(Regret))
+     warndlg('Det finns ingen bild att modifiera');
+else
 choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
 
 %Gaussiskt brus.
@@ -162,6 +163,7 @@ if (choice == 1)
     EditImage =imnoise(Regret, 'gaussian');
     imshow(EditImage, []);
 end
+
 %Poissonbrus.
 if (choice == 2)
     def = {'10'};
@@ -173,6 +175,7 @@ if (choice == 2)
     end
     imshow(EditImage, []);
 end
+
 %Salt & pepper-brus.
 if (choice == 3)
     def = {'0.05'};
@@ -184,10 +187,10 @@ if (choice == 3)
     imshow(EditImage, []);
     end
 end
+end
 
 function []=workmenu()
 f=figure('MenuBar','None');
-
 
 %Create pop up menu
 pp=uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
@@ -207,7 +210,7 @@ function imagedelete(src,callbackdata)
 global EditImage Regret
 % Close request function
 %to display a question dialog box
-selection = questdlg('Är du säker på att du vill ångra detta steg',...
+selection = questdlg('Är du säker på att du vill ångra detta steg?',...
     'Close Request Function',...
     'Ja','Nej','Ja');
 switch selection,
@@ -235,8 +238,8 @@ choice = menu('Välj filter','Wienerfilter','Linjärfilter');
 %Wienerfilter.
 if (choice == 1)
     def = {'3'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
-    answer = str2double(x);
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
     if (answer > 0)
     workmenu
     EditImage = wiener2(Regret,[answer answer]);
@@ -247,12 +250,12 @@ end
 %Linjärfilter.
 if (choice == 2)
     def = {'2'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
-    answer = str2double(x);
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
     if(answer > 0)
     matrix = matrisfix(answer);
     workmenu
-    EditImage = conv2(Regret,matrix, 'same');
+    EditImage = conv2(Regret, matrix, 'same');
     end
     imshow(EditImage, []);
 end
