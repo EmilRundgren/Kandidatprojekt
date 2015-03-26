@@ -141,13 +141,26 @@ end
 
 % --- Executes on button press in utvardera.
 function utvardera_Callback(hObject, eventdata, handles)
-global RescaledImage EditImage
+global RescaledImage EditImage 
+
 if (isempty(RescaledImage) || isempty(EditImage))
-    warndlg('Inget att utvärdera');
+   warndlg('Inget att utvärdera');
 else
-PSNR = psnr(EditImage,RescaledImage);
-SSIM = ssim(EditImage, RescaledImage);
-msgbox({['PSNR = ' num2str(PSNR)] ['SSIM = ' num2str(SSIM)]}, 'Utvärdering')
+    choice = menu('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
+    if (choice == 1)
+        PSNR = psnr(EditImage,RescaledImage);
+        msgbox(['PSNR = ' num2str(PSNR)], 'Peak Signal to Noise Ratio')
+    end
+
+    if (choice == 2)
+        SSIM = ssim(EditImage, RescaledImage);
+        msgbox(['SSIM = ' num2str(SSIM)], 'Structural Similarity')
+    end
+
+    if (choice == 3)
+        workmenu
+        imshow(EditImage, []);
+    end
 end
 
 % hObject    handle to utvardera (see GCBO)
