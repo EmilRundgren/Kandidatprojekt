@@ -85,19 +85,11 @@ OriginalImage = dicomread(info);
 RescaledImage = mat2gray(OriginalImage);
 Regret = RescaledImage;
 imshow(RescaledImage, []);
-%imcontrast;
-
-% hObject    handle to laddaInBild (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --- Executes on button press in andraKontrast.
 function andraKontrast_Callback(hObject, eventdata, handles)
 imcontrast;
-% hObject    handle to andraKontrast (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 % --- Executes during object creation, after setting all properties.
 
@@ -119,9 +111,6 @@ imshow(RescaledImage, []);
 end
 %figure ,subplot(1,2,1), imshow(J, [])
 %subplot(1,2,2),imshow(RescaledImage, [])
-% hObject    handle to jamforMedOriginal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --- Executes on button press in atergaTillOriginal.
@@ -134,10 +123,6 @@ Regret = RescaledImage;
 EditImage = RescaledImage;
 imshow(RescaledImage, []);
 end
-% hObject    handle to atergaTillOriginal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 
 % --- Executes on button press in utvardera.
 function utvardera_Callback(hObject, eventdata, handles)
@@ -163,23 +148,21 @@ else
     end
 end
 
-% hObject    handle to utvardera (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in laggTillBrus.
+% --- Knappen 'Lägg till brus'. 
 function laggTillBrus_Callback(hObject, eventdata, handles)
 global EditImage Regret
 %if (isempty(Regret))
 %    msgbox(['Det finns ingen bild att modifiera'], 'FELMEDDELANDE')
 %else
-choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Peppar');
+choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
+
+%Gaussiskt brus.
 if (choice == 1)
     workmenu
     EditImage =imnoise(Regret, 'gaussian');
     imshow(EditImage, []);
 end
+%Poissonbrus.
 if (choice == 2)
     def = {'10'};
     x = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
@@ -190,6 +173,7 @@ if (choice == 2)
     end
     imshow(EditImage, []);
 end
+%Salt & pepper-brus.
 if (choice == 3)
     def = {'0.05'};
     x = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
@@ -200,9 +184,6 @@ if (choice == 3)
     imshow(EditImage, []);
     end
 end
-%end
-
-
 
 function []=workmenu()
 f=figure('MenuBar','None');
@@ -223,8 +204,7 @@ delete(gcf)
 imshow(EditImage, []);
 
 function imagedelete(src,callbackdata)
-global EditImage
-global Regret
+global EditImage Regret
 % Close request function
 %to display a question dialog box
 selection = questdlg('Är du säker på att du vill ångra detta steg',...
@@ -232,7 +212,7 @@ selection = questdlg('Är du säker på att du vill ångra detta steg',...
     'Ja','Nej','Ja');
 switch selection,
     case 'Ja',
-        EditImage=Regret;
+        EditImage = Regret;
         delete(gcf)
     case 'Nej'
         return
@@ -242,16 +222,20 @@ function []=newopen(varargin)
 workmenu
 
 
-% --- Executes on button press in filtreraBrus.
+% --- Knappen 'Filtrera brus'. Öppnar val av filtrering och sedan filtrerar
+% bilden.
 function filtreraBrus_Callback(hObject, eventdata, handles)
 global EditImage Regret
+
 if (isempty(Regret))
      warndlg('Det finns ingen bild att filtrera')
 else
 choice = menu('Välj filter','Wienerfilter','Linjärfilter');
+
+%Wienerfilter.
 if (choice == 1)
     def = {'3'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 1-10', 'Parametervärde', 1, def);
+    x = inputdlg('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
     answer = str2double(x);
     if (answer > 0)
     workmenu
@@ -259,6 +243,8 @@ if (choice == 1)
     end
     imshow(EditImage, []);
 end
+
+%Linjärfilter.
 if (choice == 2)
     def = {'2'};
     x = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
@@ -272,71 +258,56 @@ if (choice == 2)
 end
 end
 
-% hObject    handle to filtreraBrus (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-
-% --- Executes on button press in spara.
+% --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
 function spara_Callback(hObject, eventdata, handles)
 global EditImage Regret
+
 if (isempty (EditImage))
-    X = Regret;
+    temp = Regret;
 else
-    X = EditImage;
+    temp = EditImage;
 end
 
 choice = menu('Välj format som filen ska sparas i', 'DICOM', 'JPEG');
-if (choice ==1)
+if (choice == 1)
     FileName = uiputfile('*.dcm');
-    dicomwrite(X, FileName);
+    dicomwrite(temp, FileName);
 end
 if (choice == 2)
     FileName = uiputfile('*.jpg');
-    imwrite(X, FileName);
+    imwrite(temp, FileName);
 end
-% hObject    handle to spara (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-
-% --- Executes on button press in granska.
+% --- Knappen 'Granska'. Öppnar granskningsfönster.
 function granska_Callback(hObject, eventdata, handles)
 global EditImage RescaledImage
 
-figure('units','normalized','outerposition',[0 0 1 1])
-if (isempty(EditImage))
-imshow(RescaledImage,'InitialMagnification','fit')
+if (isempty(RescaledImage) || isempty(EditImage))
+    warndlg('Det finns ingen bild att granska') 
+elseif (isempty(EditImage))
+    figure('units','normalized','outerposition',[0 0 1 1])
+    imshow(RescaledImage,'InitialMagnification','fit')
 else
-imshow(EditImage,'InitialMagnification','fit')
+    figure('units','normalized','outerposition',[0 0 1 1])
+    imshow(EditImage,'InitialMagnification','fit')
 end
+
+% --- Knappen 'Segmentera'. 
+function segmentera_Callback(hObject, eventdata, handles)
+close();
+
+% --- Knappen 'Avsluta'. Stänger programmet.
+function avsluta_Callback(hObject, eventdata, handles)
+global EditImage Regret RescaledImage
+
+EditImage = [];
+Regret = [];
+RescaledImage = [];
+close();
+
+% --- Executes on button press in klippUtSegment.
+%end
 
 %EXEMPEL FÖR ATT KUNNA CROPPA BILDER, LÅT DET BA LIGGA HÄR
 %I = imcrop(EditImage);
 %imshow(I, []);
-% hObject    handle to granska (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in segmentera.
-function segmentera_Callback(hObject, eventdata, handles)
-% hObject    handle to segmentera (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in avsluta.
-function avsluta_Callback(hObject, eventdata, handles)
-close();
-% hObject    handle to avsluta (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in klippUtSegment.
-function klippUtSegment_Callback(hObject, eventdata, handles)
-% hObject    handle to klippUtSegment (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
