@@ -141,29 +141,27 @@ end
 
 % --- Executes on button press in utvardera.
 function utvardera_Callback(hObject, eventdata, handles)
-global RescaledImage EditImage
-clearvars PSNR SSIM  
+global RescaledImage EditImage 
 
-    if (isempty(RescaledImage) || isempty(EditImage))
-       warndlg('Inget att utvärdera');
-    else
-        choice = menu('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
-        if (choice == 1)
-            PSNR = psnr(EditImage,RescaledImage);
-            msgbox(['PSNR = ' num2str(PSNR)], 'Peak Signal to Noise Ratio')
-        end
-
-        if (choice == 2)
-            SSIM = ssim(EditImage, RescaledImage);
-            msgbox(['SSIM = ' num2str(SSIM)], 'Structural Similarity')
-        end
-
-        if (choice == 3)
-            workmenu
-            imshow(EditImage, []);
-        end
+if (isempty(RescaledImage) || isempty(EditImage))
+   warndlg('Inget att utvärdera');
+else
+    choice = menu('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
+    if (choice == 1)
+        PSNR = psnr(EditImage,RescaledImage);
+        msgbox(['PSNR = ' num2str(PSNR)], 'Peak Signal to Noise Ratio')
     end
 
+    if (choice == 2)
+        SSIM = ssim(EditImage, RescaledImage);
+        msgbox(['SSIM = ' num2str(SSIM)], 'Structural Similarity')
+    end
+
+    if (choice == 3)
+        workmenu
+        imshow(EditImage, []);
+    end
+end
 
 % hObject    handle to utvardera (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -331,8 +329,6 @@ function segmentera_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in avsluta.
 function avsluta_Callback(hObject, eventdata, handles)
-global EditImage Regret RescaledImage
-clearvars -global
 close();
 % hObject    handle to avsluta (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
