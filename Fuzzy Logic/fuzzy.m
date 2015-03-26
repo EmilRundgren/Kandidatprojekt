@@ -14,22 +14,22 @@ img = im2double(Y);
 
 MF = SFCM2D(img,antalKluster);
 
-figure
-subplot(231); imshow(img,[])
-for i=1:antalKluster
-    imgfi=reshape(MF(i,:,:),size(img,1),size(img,2));
-    subplot(2,3,i+1); imshow(imgfi,[])
-    title(['Index No: ' int2str(i)])
-end
+% figure
+% subplot(231); imshow(img,[])
+% for i=1:antalKluster
+%     imgfi=reshape(MF(i,:,:),size(img,1),size(img,2));
+%     subplot(2,3,i+1); imshow(imgfi,[])
+%     title(['Index No: ' int2str(i)])
+% end
 
-temp=0;
-while temp
-    nopt = input('Input the Index No that you are interested\n');
-    if ~isempty(nopt), temp=0; end
-end
+% temp=0;
+% while temp
+%     nopt = input('Input the Index No that you are interested\n');
+%     if ~isempty(nopt), temp=0; end
+% end
 
-close(gcf);
+% close(gcf);
 
 imgfcm=reshape(MF(1,:,:),size(img,1),size(img,2));
 
-fuzzy2(img,imgfcm,.5);
+fuzzy2(img,imgfcm,0.5);

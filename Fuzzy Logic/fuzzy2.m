@@ -16,9 +16,9 @@ function [imgls,sls]=fuzzy2(img,imgfcm,beta)
 
 img=double(img);
 
-se=5;       %template radius for spatial filtering
-sigma=2;    %gaussian filter weight
-d0=.5;      %fuzzy thresholding
+se=3;       %template radius for spatial filtering
+sigma=0.01;    %gaussian filter weight
+d0=0.5;      %fuzzy thresholding 0.5 standard
 epsilon=1.5;    %Dirac regulator
 
 %adaptive definition of penalizing item mu
@@ -27,7 +27,7 @@ bwa=bwarea(u);  %area of initial contour
 bw2=bwperim(u);
 bwp=sum(sum(bw2));  %peripherium of initial contour
 mu=bwp/bwa;     %Coefficient of the internal (penalizing) energy term P(\phi);
-timestep=0.2/mu; %The product timestep*mu must be less than 0.25 for stability
+timestep=0.00001/mu; %The product timestep*mu must be less than 0.25 for stability
 %end
 
 fs=fspecial('gaussian',se,sigma);
@@ -69,7 +69,7 @@ imshow(img,[]);
 hold on
 imgt(:,:)=sls(1,:,:);
 contour(imgt,[0 0],'m');
-contour(u,[0 0],'g','linewidth',2); 
+contour(u,[0 0],'g','linewidth',1); 
 %totalIterNum=[num2str(nTi*1000), ' iterations'];  
 title(['Magenta: Initial;  Green: Final after 50']);
 hold off
