@@ -299,10 +299,7 @@ close();
 % --- Knappen 'Avsluta'. Stänger programmet.
 function avsluta_Callback(hObject, eventdata, handles)
 global EditImage Regret RescaledImage
-
-EditImage = [];
-Regret = [];
-RescaledImage = [];
+clearvars -global
 close();
 
 % --- Executes on button press in klippUtSegment.
