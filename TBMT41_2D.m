@@ -263,19 +263,19 @@ function spara_Callback(hObject, eventdata, handles)
 global EditImage Regret
 
 if (isempty (EditImage))
-    temp = Regret;
+    tempo = Regret;
 else
-    temp = EditImage;
+    tempo = EditImage;
 end
 
 choice = menu('Välj format som filen ska sparas i', 'DICOM', 'JPEG');
 if (choice == 1)
     FileName = uiputfile('*.dcm');
-    dicomwrite(temp, FileName);
+    dicomwrite(tempo, FileName);
 end
 if (choice == 2)
     FileName = uiputfile('*.jpg');
-    imwrite(temp, FileName);
+    imwrite(tempo, FileName);
 end
 
 % --- Knappen 'Granska'. Öppnar granskningsfönster.
