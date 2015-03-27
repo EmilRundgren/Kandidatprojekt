@@ -1,3 +1,6 @@
+% ----- DELSYSTEM 3 - GUI -----
+
+
 function varargout = TBMT41_2D(varargin)
 % TBMT41_2D MATLAB code for TBMT41_2D.fig
 %      TBMT41_2D, by itself, creates a new TBMT41_2D or raises the existing
@@ -59,7 +62,6 @@ guidata(hObject, handles);
 % UIWAIT makes TBMT41_2D wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = TBMT41_2D_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -70,10 +72,10 @@ function varargout = TBMT41_2D_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
-% --- Executes on button press in laddaInBild.
+% --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
 global RescaledImage OriginalImage Regret;
+
 %clearvars -global OriginalImage EditImage;
 RescaledImage = [];
 OriginalImage = [];
@@ -86,19 +88,17 @@ RescaledImage = mat2gray(OriginalImage);
 Regret = RescaledImage;
 imshow(RescaledImage, []);
 
-
-% --- Executes on button press in andraKontrast.
+% --- Knappen 'Ändra kontrast'.
 function andraKontrast_Callback(hObject, eventdata, handles)
 imcontrast;
 
-% --- Executes during object creation, after setting all properties.
-
-
-% --- Executes on button press in jamforMedOriginal.
+% --- Knappen 'Jämför med original'.
 function jamforMedOriginal_Callback(hObject, eventdata, handles)
 global RescaledImage EditImage Regret
+
 if (isempty(EditImage)|| isempty(RescaledImage))
 warndlg('Ingen bild att jämföra med.')
+
 else   
 set(figure, 'Position', [100, 100, 1049, 895]);
 axes('Position',[0,0,0.5,1])
@@ -112,10 +112,10 @@ end
 %figure ,subplot(1,2,1), imshow(J, [])
 %subplot(1,2,2),imshow(RescaledImage, [])
 
-
-% --- Executes on button press in atergaTillOriginal.
+% --- Knappen 'Återgå till original'.
 function atergaTillOriginal_Callback(hObject, eventdata, handles)
 global RescaledImage Regret EditImage
+
 if (isempty(RescaledImage))
     warndlg('Inget att ångra')
 else
@@ -124,7 +124,7 @@ EditImage = RescaledImage;
 imshow(RescaledImage, []);
 end
 
-% --- Executes on button press in utvardera.
+% --- Knappen 'Utvärdera'.
 function utvardera_Callback(hObject, eventdata, handles)
 global RescaledImage EditImage 
 
@@ -167,11 +167,11 @@ end
 %Poissonbrus.
 if (choice == 2)
     def = {'10'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
-    x = str2double(x);
-    if (x > 0)
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer > 0)
     workmenu
-    EditImage =(10^(x)) * imnoise(Regret/(10^(x)), 'poisson');
+    EditImage = (10^(answer)) * imnoise(Regret/(10^(answer)), 'poisson');
     end
     imshow(EditImage, []);
 end
@@ -179,8 +179,8 @@ end
 %Salt & pepper-brus.
 if (choice == 3)
     def = {'0.05'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
-    answer = str2double(x);
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
     if (answer > 0)
     workmenu
     EditImage = imnoise(Regret, 'Salt & Pepper', answer);
@@ -193,21 +193,23 @@ function []=workmenu()
 f=figure('MenuBar','None');
 
 %Create pop up menu
-pp=uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
+pp = uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
     'pos',[0 250 100 20], ...
     'Callback', @imageview);
-pp2=uicontrol(f,'Style','Pushbutton','string',{'Avbryt'},...
+pp2 = uicontrol(f,'Style','Pushbutton','string',{'Avbryt'},...
     'pos',[0 200 100 20], ...
     'Callback' , @imagedelete);
 
 function imageview(src, callbackdata)
 global EditImage Regret
+
 Regret = EditImage;
-delete(gcf)
+delete(gcf);
 imshow(EditImage, []);
 
 function imagedelete(src,callbackdata)
 global EditImage Regret
+
 % Close request function
 %to display a question dialog box
 selection = questdlg('Är du säker på att du vill ångra detta steg?',...
@@ -216,14 +218,15 @@ selection = questdlg('Är du säker på att du vill ångra detta steg?',...
 switch selection,
     case 'Ja',
         EditImage = Regret;
-        delete(gcf)
+        delete(gcf);
     case 'Nej'
         return
 end
 
-function []=newopen(varargin)
-workmenu
-
+% Utkommenterad funktion som vi misstänker ej används. Om allt fuckas:
+% testa att kommentera in.
+%function []=newopen(varargin)
+%workmenu
 
 % --- Knappen 'Filtrera brus'. Öppnar val av filtrering och sedan filtrerar
 % bilden.
@@ -285,7 +288,7 @@ end
 function granska_Callback(hObject, eventdata, handles)
 global EditImage RescaledImage
 
-if (isempty(RescaledImage) || isempty(EditImage))
+if (isempty(RescaledImage))
     warndlg('Det finns ingen bild att granska') 
 elseif (isempty(EditImage))
     figure('units','normalized','outerposition',[0 0 1 1])
@@ -297,7 +300,38 @@ end
 
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
-close();
+global EditImage Regret
+
+if (isempty(Regret))
+     warndlg('Det finns ingen bild att segmentera')
+else
+choice = menu('Välj segmentationsmetod','Fuzzy Logic','Watershed');
+
+%Fuzzy Logic
+if (choice == 1)
+    def = {'3'};
+    x = inputdlg('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
+    answer = str2double(x);
+    if (answer > 0)
+    workmenu
+    EditImage = fuzzy(Regret, [answer answer]);
+    end
+    imshow(EditImage, []);
+end
+
+%Watershed
+% if (choice == 2)
+%     def = {'2'};
+%     x = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
+%     answer = str2double(x);
+%     if(answer > 0)
+%     matrix = matrisfix(answer);
+%     workmenu
+%     EditImage = conv2(Regret,matrix, 'same');
+%     end
+%     imshow(EditImage, []);
+% end
+end
 
 % --- Knappen 'Avsluta'. Stänger programmet.
 function avsluta_Callback(hObject, eventdata, handles)
