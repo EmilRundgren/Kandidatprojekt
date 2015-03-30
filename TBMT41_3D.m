@@ -22,7 +22,7 @@ function varargout = TBMT41_3D(varargin)
 
 % Edit the above text to modify the response to help TBMT41_3D
 
-% Last Modified by GUIDE v2.5 25-Mar-2015 12:32:07
+% Last Modified by GUIDE v2.5 30-Mar-2015 14:27:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,8 +75,9 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in Open_Image.
 function Open_Image_Callback(hObject, eventdata, handles)
-global RescaledImage voxel_size slice_resolution
+global RescaledImage voxel_size slice_resolution contrast nfile
 slice_resolution = [256 256];
+contrast = 1;
 PathName= uigetdir;
 a = dir(PathName);
 isdire = 0;
@@ -90,11 +91,9 @@ file_list = make_file_list(PathName, '*.dcm');
 file_list = sort(file_list);
 info1 = dicominfo(file_list{1});
 info2 = dicominfo(file_list{2});
-voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)]
+voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)];
 OriginalImage = zeros(slice_resolution(1), slice_resolution(2), numel(nfile));
 RescaledImage = OriginalImage;
-file_list
-size(file_list)
 cd(PathName)
 for i=1:nfile
     if (not(a(i).isdir))
@@ -142,12 +141,12 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in Examine_Image.
 function Examine_Image_Callback(hObject, eventdata, handles)
-global RescaledImage voxel_size slice_resolution
+global RescaledImage voxel_size slice_resolution contrast
 h = figure('units','normalized','outerposition',[0 0 1 1]);
 vol3d('cdata', RescaledImage, 'texture', '3D');
 colormap(jet(256));
 alphamap('rampup');
-alphamap(0.06*alphamap);
+alphamap(0.06*alphamap*contrast);
 set(gca, 'DataAspectRatio', 1./voxel_size);
 set(gca, 'Color', [0 0 0]);
 set(gca, 'zdir', 'reverse');
@@ -164,5 +163,43 @@ drawnow;
 
 
 % hObject    handle to Examine_Image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in Change_Contrast.
+function Change_Contrast_Callback(hObject, eventdata, handles)
+global contrast
+def = {'1'};
+choice = inputdlg('Ange kontrastnivå (vanligtvis mellan 0.50-5)', 'Parametervärde', 1, def);
+contrast_new = str2double(choice);
+if contrast == 1
+    alphamap(alphamap*contrast_new);
+else
+    alphamap((alphamap*contrast_new)/contrast);
+end
+    contrast = contrast_new;
+    
+% hObject    handle to Change_Contrast (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in sagaxtran.
+function sagaxtran_Callback(hObject, eventdata, handles)
+global RescaledImage nfile slice_resolution
+sag = squeeze(RescaledImage(:,slice_resolution(2)/2,:));
+ax = squeeze(RescaledImage(slice_resolution(1)/2, :, :));
+trans = squeeze(RescaledImage(:, :, nfile/2));
+set(figure, 'Position', [100, 100, 1049, 895]);
+axes('Position' , [0,0,0.55,1])
+imshow(sag, [])
+axes('Position' , [0.33,0, 0.5, 1])
+imshow(ax, [])
+axes('Position' ,[0.66,0,0.5,1])
+imshow(trans, [])
+
+
+% hObject    handle to sagaxtran (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
