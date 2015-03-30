@@ -294,7 +294,38 @@ end
 
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
+global EditImage Regret
 
+if (isempty(Regret))
+     warndlg('Det finns ingen bild att segmentera')
+else
+choice = menu('Välj segmentationsmetod','Fuzzy Logic','Watershed');
+
+%Fuzzy Logic
+if (choice == 1)
+    def = {'3'};
+    x = inputdlg('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
+    answer = str2double(x);
+    if (answer > 0)
+    workmenu
+    EditImage = fuzzy(Regret, answer);
+    end
+    imshow(EditImage, []);
+end
+
+%Watershed
+% if (choice == 2)
+%     def = {'2'};
+%     x = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
+%     answer = str2double(x);
+%     if(answer > 0)
+%     matrix = matrisfix(answer);
+%     workmenu
+%     EditImage = conv2(Regret,matrix, 'same');
+%     end
+%     imshow(EditImage, []);
+% end
+end
 
 % --- Knappen 'Avsluta'. Stänger programmet.
 function avsluta_Callback(hObject, eventdata, handles)
