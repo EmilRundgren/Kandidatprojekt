@@ -76,9 +76,10 @@ varargout{1} = handles.output;
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
-global RescaledImage OriginalImage Regret;
+global RescaledImage OriginalImage Regret EditImage;
 
 %clearvars -global OriginalImage EditImage;
+EditImage = [];
 RescaledImage = [];
 OriginalImage = [];
 Regret = [];
@@ -87,6 +88,7 @@ cd(PathName);
 info = dicominfo(FileName);
 OriginalImage = dicomread(info);
 RescaledImage = mat2gray(OriginalImage);
+EditImage = RescaledImage;
 Regret = RescaledImage;
 imshow(RescaledImage, []);
 
@@ -251,7 +253,7 @@ if (choice == 1)
     workmenu
     EditImage = wiener2(Regret,[answer answer]);
     end
-
+end
 %Linjärfilter.
 if (choice == 2)
     def = {'2'};
@@ -262,6 +264,7 @@ if (choice == 2)
     workmenu
     EditImage = conv2(Regret, matrix, 'same');
     end
+end
 end
 
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.

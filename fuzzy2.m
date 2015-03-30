@@ -1,4 +1,4 @@
-function [imgls,sls]=fuzzy2(img,imgfcm,beta)
+function [img,sls]=fuzzy2(img,imgfcm,beta)
 % Enhancing level set segmentation by spatial fuzzy clustering
 %   [imgls,sls]=fuzzyLSM(img,imgfcm,fcmind,beta)
 %       img: input grayscale image
@@ -14,7 +14,7 @@ function [imgls,sls]=fuzzy2(img,imgfcm,beta)
 %   segmentation. Computers in Biology and Medicine 41(1) 1-10.
 %--------------------------------------------------------------------------
 
-img=double(img);
+%img=double(img);
 
 se=3;       %template radius for spatial filtering
 sigma=0.01;    %gaussian filter weight
@@ -32,7 +32,7 @@ timestep=0.00001/mu; %The product timestep*mu must be less than 0.25 for stabili
 
 fs=fspecial('gaussian',se,sigma);
 img_smooth=conv2(double(img),double(fs),'same');
-[Ix,Iy]=gradient(img_smooth);
+[Ix,Iy]=gradient(img_smooth); %alternativt img smooth om 2 ovanstående rader används
 f=Ix.^2+Iy.^2;
 g=1./(1+f);  % edge indicator function.
 
@@ -63,16 +63,15 @@ nTi=0;
 %   bGo=0;end
 %end
 
-imgls=u;
+imgls=u; %Bilden matilda sen vill ha
 
 imshow(img,[]);
 hold on
 imgt(:,:)=sls(1,:,:);
 contour(imgt,[0 0],'m');
-contour(u,[0 0],'g','linewidth',1); 
-%totalIterNum=[num2str(nTi*1000), ' iterations'];  
-title(['Magenta: Initial;  Green: Final after 50']);
+contour(u,[0 0],'g','linewidth',0.5); 
 hold off
+
 
 
 %% core functions of level set methods
