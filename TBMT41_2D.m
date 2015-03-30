@@ -72,6 +72,8 @@ function varargout = TBMT41_2D_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
+
+
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
 global RescaledImage OriginalImage Regret;
@@ -305,7 +307,7 @@ global EditImage Regret
 if (isempty(Regret))
      warndlg('Det finns ingen bild att segmentera')
 else
-choice = menu('Välj segmentationsmetod','Fuzzy Logic','Watershed');
+choice = menu('Välj segmenteringsmetod','Fuzzy Logic','Watershed');
 
 %Fuzzy Logic
 if (choice == 1)
