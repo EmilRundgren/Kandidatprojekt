@@ -155,7 +155,8 @@ function laggTillBrus_Callback(hObject, eventdata, handles)
 global EditImage Regret
 
 if (isempty(Regret))
-     warndlg('Det finns ingen bild att modifiera');
+   warndlg('Ingen bild vald');
+
 else
 choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
 
@@ -239,7 +240,7 @@ global EditImage Regret
 if (isempty(Regret))
      warndlg('Det finns ingen bild att filtrera')
 else
-choice = menu('Välj filter','Wienerfilter','Linjärfilter');
+    choice = menu('Välj filter','Wienerfilter','Linjärfilter');
 
 %Wienerfilter.
 if (choice == 1)
@@ -250,8 +251,6 @@ if (choice == 1)
     workmenu
     EditImage = wiener2(Regret,[answer answer]);
     end
-    imshow(EditImage, []);
-end
 
 %Linjärfilter.
 if (choice == 2)
@@ -263,8 +262,6 @@ if (choice == 2)
     workmenu
     EditImage = conv2(Regret, matrix, 'same');
     end
-    imshow(EditImage, []);
-end
 end
 
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
@@ -304,6 +301,7 @@ end
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
 
+
 global EditImage Regret
 
 if (isempty(Regret))
@@ -326,6 +324,7 @@ if (choice == 1)
     
     end
     %imshow(EditImage, []);
+
 end
 
 %Watershed
