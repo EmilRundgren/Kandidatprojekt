@@ -151,9 +151,9 @@ end
 % --- Knappen 'Lägg till brus'. 
 function laggTillBrus_Callback(hObject, eventdata, handles)
 global EditImage Regret
-if (isempty(Regret))
-   warndlg('Ingen bild vald');
-else
+%if (isempty(Regret))
+%    msgbox(['Det finns ingen bild att modifiera'], 'FELMEDDELANDE')
+%else
 choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
 
 %Gaussiskt brus.
@@ -162,7 +162,6 @@ if (choice == 1)
     EditImage =imnoise(Regret, 'gaussian');
     imshow(EditImage, []);
 end
-
 %Poissonbrus.
 if (choice == 2)
     def = {'10'};
@@ -174,7 +173,6 @@ if (choice == 2)
     end
     imshow(EditImage, []);
 end
-
 %Salt & pepper-brus.
 if (choice == 3)
     def = {'0.05'};
@@ -232,7 +230,7 @@ global EditImage Regret
 if (isempty(Regret))
      warndlg('Det finns ingen bild att filtrera')
 else
-    choice = menu('Välj filter','Wienerfilter','Linjärfilter');
+choice = menu('Välj filter','Wienerfilter','Linjärfilter');
 
 %Wienerfilter.
 if (choice == 1)
@@ -243,6 +241,8 @@ if (choice == 1)
     workmenu
     EditImage = wiener2(Regret,[answer answer]);
     end
+    imshow(EditImage, []);
+end
 
 %Linjärfilter.
 if (choice == 2)
@@ -254,6 +254,8 @@ if (choice == 2)
     workmenu
     EditImage = conv2(Regret,matrix, 'same');
     end
+    imshow(EditImage, []);
+end
 end
 
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
@@ -292,15 +294,21 @@ end
 
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
+global EditImage Regret
+
+if (isempty(Regret))
+     warndlg('Det finns ingen bild att segmentera')
+else
+choice = menu('Välj segmentationsmetod','Fuzzy Logic','Watershed');
 
 %Fuzzy Logic
 if (choice == 1)
     def = {'3'};
-    stringAnswer = inputdlg('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
-    answer = str2double(stringAnswer);
+    x = inputdlg('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
+    answer = str2double(x);
     if (answer > 0)
     workmenu
-    EditImage = fuzzy(Regret, [answer answer]);
+    EditImage = fuzzy(Regret, answer);
     end
     imshow(EditImage, []);
 end
@@ -318,7 +326,6 @@ end
 %     imshow(EditImage, []);
 % end
 end
-
 
 % --- Knappen 'Avsluta'. Stänger programmet.
 function avsluta_Callback(hObject, eventdata, handles)
