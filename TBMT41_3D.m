@@ -22,7 +22,7 @@ function varargout = TBMT41_3D(varargin)
 
 % Edit the above text to modify the response to help TBMT41_3D
 
-% Last Modified by GUIDE v2.5 31-Mar-2015 14:07:35
+% Last Modified by GUIDE v2.5 31-Mar-2015 14:29:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,7 +75,7 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in Open_Image.
 function Open_Image_Callback(hObject, eventdata, handles)
-global RescaledImage voxel_size slice_resolution contrast nfile Regret
+global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal
 slice_resolution = [256 256];
 contrast = 1;
 choice = menu('Välj format som filen ska öppnas i', 'DICOM', 'Matris');
@@ -117,10 +117,11 @@ if (choice == 2)
     load([FilePath FileName]);
 end
 Regret = RescaledImage;
+Orginal = RescaledImage;
 vol3d('cdata', RescaledImage, 'texture', '3D');
 colormap(jet(256));
 alphamap('rampup');
-alphamap(0.06*alphamap);
+alphamap(0.06*alphamap*contrast);
 set(gca, 'DataAspectRatio', 1./voxel_size);
 set(gca, 'Color', [0 0 0]);
 set(gca, 'zdir', 'reverse');
@@ -251,6 +252,7 @@ else
         for i=1:nfile
             RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian');
         end
+        cla
         vol3d('cdata', RescaledImage, 'texture', '3D');
         colormap(jet(256));
         alphamap('rampup');
@@ -277,6 +279,7 @@ else
             for i=1:nfile
                 RescaledImage(:,:,i) =(10^(x)) * imnoise(RescaledImage(:,:,i)/(10^(x)), 'poisson');
             end
+            cla
             vol3d('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
@@ -304,6 +307,7 @@ else
             for i=1:nfile
                 RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'Salt & Pepper', answer);
             end
+            cla
             vol3d('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
@@ -350,6 +354,7 @@ else
             for i=1:nfile
                 RescaledImage(:,:,i) = wiener2(RescaledImage(:,:,i),[answer answer]);
             end
+            cla
             vol3d('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
@@ -378,6 +383,7 @@ else
             for i=1:nfile
                 RescaledImage(:,:,i) = conv2(RescaledImage(:,:,i),matrix, 'same');
             end
+            cla
             vol3d('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
@@ -401,5 +407,35 @@ else
 end
 
 % hObject    handle to filtreraBrus (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in atergaTillOrginal.
+function atergaTillOrginal_Callback(hObject, eventdata, handles)
+global RescaledImage Regret Orginal voxel_size slice_resolution contrast
+Regret = Orginal;
+RescaledImage = Orginal;
+cla
+vol3d('cdata', RescaledImage, 'texture', '3D');
+colormap(jet(256));
+alphamap('rampup');
+alphamap(0.06*alphamap*contrast);
+set(gca, 'DataAspectRatio', 1./voxel_size);
+set(gca, 'Color', [0 0 0]);
+set(gca, 'zdir', 'reverse');
+xlabel('X [mm]', 'FontSize', 15);
+ylabel('Y [mm]', 'FontSize', 15);
+zlabel('Z [mm]', 'FontSize', 15);
+set(gca, 'xtick', [0:10:slice_resolution(1)]);
+set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+set(gca, 'ytick', [0:10:slice_resolution(2)]);
+set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
+drawnow;
+
+
+% hObject    handle to atergaTillOrginal (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
