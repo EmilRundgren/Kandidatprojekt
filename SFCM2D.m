@@ -29,7 +29,7 @@ if nargin<4
     end
 end
 
-img=wiener2(img,5);
+%img=wiener2(img,5);
 
 [rn,cn]=size(img);
 imgsiz=rn*cn;

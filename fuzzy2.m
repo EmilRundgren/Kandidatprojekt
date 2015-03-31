@@ -1,4 +1,4 @@
-function [img,sls]=fuzzy2(img,imgfcm,beta)
+function [imgls,sls]=fuzzy2(img,imgfcm,beta)
 % Enhancing level set segmentation by spatial fuzzy clustering
 %   [imgls,sls]=fuzzyLSM(img,imgfcm,fcmind,beta)
 %       img: input grayscale image
@@ -30,9 +30,9 @@ mu=bwp/bwa;     %Coefficient of the internal (penalizing) energy term P(\phi);
 timestep=0.00001/mu; %The product timestep*mu must be less than 0.25 for stability
 %end
 
-fs=fspecial('gaussian',se,sigma);
-img_smooth=conv2(double(img),double(fs),'same');
-[Ix,Iy]=gradient(img_smooth); %alternativt img smooth om 2 ovanstående rader används
+%fs=fspecial('gaussian',se,sigma);
+%img_smooth=conv2(double(img),double(fs),'same');
+[Ix,Iy]=gradient(img); %alternativt img smooth om 2 ovanstående rader används
 f=Ix.^2+Iy.^2;
 g=1./(1+f);  % edge indicator function.
 
@@ -69,7 +69,8 @@ imshow(img,[]);
 hold on
 imgt(:,:)=sls(1,:,:);
 contour(imgt,[0 0],'m');
-contour(u,[0 0],'g','linewidth',0.5); 
+contour(u,[0 0],'g','linewidth',0.5);
+
 hold off
 
 
