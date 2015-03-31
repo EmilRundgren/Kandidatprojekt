@@ -30,9 +30,7 @@ mu=bwp/bwa;     %Coefficient of the internal (penalizing) energy term P(\phi);
 timestep=0.00001/mu; %The product timestep*mu must be less than 0.25 for stability
 %end
 
-%fs=fspecial('gaussian',se,sigma);
-%img_smooth=conv2(double(img),double(fs),'same');
-[Ix,Iy]=gradient(img); %alternativt img smooth om 2 ovanstående rader används
+[Ix,Iy]=gradient(img);
 f=Ix.^2+Iy.^2;
 g=1./(1+f);  % edge indicator function.
 
@@ -48,20 +46,11 @@ nu=-2*(2*beta*imgfcm-(1-beta));
 % outside(inside) the object.
 
 % start level set evolution
-%bGo=1;
 nTi=0;
-%while bGo
-    u=EVOLUTION(u, g, lambda, mu, nu, epsilon, timestep, 50);
-    nTi=nTi+1;
-    sls(nTi+1,:,:)=u;
-    %imshow(img,[]);hold on;
-    %[c,h] = contour(u,[0 0],'m');
-    %title(sprintf('Time Step: %d',nTi*1000));
-    %hold off
-    %pause(0.05);
-%   if ~strcmp(questdlg('Continue or not?'),'Yes'),
-%   bGo=0;end
-%end
+u=EVOLUTION(u, g, lambda, mu, nu, epsilon, timestep, 50);
+nTi=nTi+1;
+sls(nTi+1,:,:)=u;
+
 
 imgls=u; %Bilden matilda sen vill ha
 
