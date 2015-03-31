@@ -22,7 +22,7 @@ function varargout = TBMT41_3D(varargin)
 
 % Edit the above text to modify the response to help TBMT41_3D
 
-% Last Modified by GUIDE v2.5 31-Mar-2015 14:29:44
+% Last Modified by GUIDE v2.5 31-Mar-2015 15:12:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -437,5 +437,37 @@ drawnow;
 
 
 % hObject    handle to atergaTillOrginal (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in utvardera.
+function utvardera_Callback(hObject, eventdata, handles)
+global RescaledImage Orginal nfile
+
+if (isempty(RescaledImage) || isempty(Orginal))
+   warndlg('Inget att utvärdera');
+else
+    choice = menu('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
+    if (choice == 1)
+        PSNR = 0;
+        for i=1:nfile
+                PSNR = PSNR + psnr(RescaledImage(:,:,i),Orginal(:,:,i));
+        end
+        PSNRfinal = PSNR/nfile;
+        msgbox(['PSNR = ' num2str(PSNRfinal)], 'Peak Signal to Noise Ratio')
+    end
+
+    if (choice == 2)
+        SSIM = 0;
+        for i=1:nfile
+                SSIM = SSIM + ssim(RescaledImage(:,:,i), Orginal(:,:,i));
+        end
+        SSIMfinal = SSIM/nfile;
+        msgbox(['SSIM = ' num2str(SSIMfinal)], 'Structural Similarity')
+    end
+end
+
+% hObject    handle to utvardera (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
