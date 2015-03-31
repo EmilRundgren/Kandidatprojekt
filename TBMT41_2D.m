@@ -326,22 +326,31 @@ if (choice == 1)
     [EditImage, sls] = fuzzy2(EditImage,imgfcm,0.5);
     
     end
-    %imshow(EditImage, []);
 
 end
 
 %Watershed
-% if (choice == 2)
-%     def = {'2'};
-%     x = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
-%     answer = str2double(x);
-%     if(answer > 0)
-%     matrix = matrisfix(answer);
-%     workmenu
-%     EditImage = conv2(Regret,matrix, 'same');
-%     end
-%     imshow(EditImage, []);
-% end
+if (choice == 2)
+    prompt = {'Ange parameter för strel:','Ta bort segment med färre pixlar än:'};
+    dlg_title = 'Ange parametrar för Watershed';
+    num_lines = 1;
+    def = {'4','10'};
+    x = inputdlg(prompt,dlg_title,num_lines,def);
+
+    answer = str2double(x);
+    if(answer > 0)
+    workmenu
+    EditImages = WatershedJ(Regret,answer);
+    end
+    
+    imshow(Regret, [])
+    hold on
+    himage = imshow(EditImages);
+    himage.AlphaData = 0.2;
+    title('Bilden segmenterad med Watershed')
+    
+    EditImage = imfuse(Regret,EditImages,'blend','Scaling','joint');
+end
 end
 
 
