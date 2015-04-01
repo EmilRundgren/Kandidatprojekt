@@ -1,56 +1,57 @@
-% ----- DELSYSTEM 2 - BRUSHANTERING -----
+% --------------- DELSYSTEM 2 - BRUSHANTERING ---------------
 
+% Funktion som anropar önskad brushanteringsfunktion.
+function [utbild] = Brushantering(inbild, metod)
 
-% --- Knappen 'Lägg till brus'. 
-function laggTillBrus_Callback(hObject, eventdata, handles)
-global EditImage Regret
+if (strcmp(metod, 'laggtillbrus'))
+    utbild = laggTillBrus(inbild);
+end
 
-if (isempty(Regret))
+if (strcmp(metod, 'filtrerabrus'))
+    utbild = filtreraBrus(inbild);
+end
+
+% Funktion som lägger till brus på en inbild och ger som utbild. 
+function [utbild] = laggTillBrus(inbild)
+
+if (isempty(inbild))
      warndlg('Det finns ingen bild att modifiera');
 else
 choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
 
 %Gaussiskt brus.
 if (choice == 1)
-    workmenu
-    EditImage =imnoise(Regret, 'gaussian');
-    imshow(EditImage, []);
+    utbild = imnoise(inbild, 'gaussian');
 end
 
 %Poissonbrus.
 if (choice == 2)
     def = {'10'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
-    x = str2double(x);
-    if (x > 0)
-    workmenu
-    EditImage =(10^(x)) * imnoise(Regret/(10^(x)), 'poisson');
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer > 0)
+    utbild = (10^(answer)) * imnoise(inbild/(10^(answer)), 'poisson');
     end
-    imshow(EditImage, []);
 end
 
 %Salt & pepper-brus.
 if (choice == 3)
     def = {'0.05'};
-    x = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
-    answer = str2double(x);
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
     if (answer > 0)
-    workmenu
-    EditImage = imnoise(Regret, 'Salt & Pepper', answer);
-    imshow(EditImage, []);
+    utbild = imnoise(inbild, 'Salt & Pepper', answer);
     end
 end
 end
 
-% --- Knappen 'Filtrera brus'. Öppnar val av filtrering och sedan filtrerar
-% bilden.
-function filtreraBrus_Callback(hObject, eventdata, handles)
-global EditImage Regret
+% Funktion som filtrerar brus på en inbild och ger som utbild.
+function [utbild] = filtreraBrus(inbild)
 
-if (isempty(Regret))
+if (isempty(inbild))
      warndlg('Det finns ingen bild att filtrera')
 else
-choice = menu('Välj filter','Wienerfilter','Linjärfilter');
+    choice = menu('Välj filter','Wienerfilter','Linjärfilter');
 
 %Wienerfilter.
 if (choice == 1)
@@ -58,10 +59,8 @@ if (choice == 1)
     stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
     answer = str2double(stringAnswer);
     if (answer > 0)
-    workmenu
-    EditImage = wiener2(Regret,[answer answer]);
+    utbild = wiener2(inbild ,[answer answer]);
     end
-    imshow(EditImage, []);
 end
 
 %Linjärfilter.
@@ -71,9 +70,7 @@ if (choice == 2)
     answer = str2double(stringAnswer);
     if(answer > 0)
     matrix = matrisfix(answer);
-    workmenu
-    EditImage = conv2(Regret, matrix, 'same');
+    utbild = conv2(inbild, matrix, 'same');
     end
-    imshow(EditImage, []);
 end
 end

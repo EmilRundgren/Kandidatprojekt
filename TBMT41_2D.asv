@@ -76,17 +76,21 @@ varargout{1} = handles.output;
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
-global RescaledImage OriginalImage RegretImage EditImage;
+global RescaledImage OriginalImage Regret EditImage;
 
+%clearvars -global OriginalImage EditImage;
+EditImage = [];
+RescaledImage = [];
+OriginalImage = [];
+Regret = [];
 [FileName, PathName] = uigetfile('*.dcm','browse');
 cd(PathName);
 info = dicominfo(FileName);
-
 OriginalImage = dicomread(info);
 RescaledImage = mat2gray(OriginalImage);
-RegretImage = RescaledImage;
 EditImage = RescaledImage;
-imshow(EditImage, []);
+Regret = RescaledImage;
+imshow(RescaledImage, []);
 
 % --- Knappen 'Ändra kontrast'.
 function andraKontrast_Callback(hObject, eventdata, handles)
@@ -94,7 +98,7 @@ imcontrast;
 
 % --- Knappen 'Jämför med original'.
 function jamforMedOriginal_Callback(hObject, eventdata, handles)
-global RescaledImage EditImage
+global RescaledImage EditImage Regret
 
 if (isempty(EditImage)|| isempty(RescaledImage))
 warndlg('Ingen bild att jämföra med.')
@@ -106,16 +110,20 @@ imshow(EditImage ,[] );
 axes('Position',[0.5,0, 0.5, 1])
 linkaxes();
 imshow(RescaledImage, []);
+%EditImage = [];
+%Regret = [];
 end
+%figure ,subplot(1,2,1), imshow(J, [])
+%subplot(1,2,2),imshow(RescaledImage, [])
 
 % --- Knappen 'Återgå till original'.
 function atergaTillOriginal_Callback(hObject, eventdata, handles)
-global RescaledImage RegretImage EditImage
+global RescaledImage Regret EditImage
 
 if (isempty(RescaledImage))
-    warndlg('Inget att återgå till')
+    warndlg('Inget att ångra')
 else
-RegretImage = RescaledImage;
+Regret = RescaledImage;
 EditImage = RescaledImage;
 imshow(RescaledImage, []);
 end
@@ -124,7 +132,7 @@ end
 function utvardera_Callback(hObject, eventdata, handles)
 global RescaledImage EditImage 
 
-if (isequal(RescaledImage,EditImage) || isempty(EditImage))
+if (isempty(RescaledImage) || isempty(EditImage))
    warndlg('Inget att utvärdera');
 else
     choice = menu('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
@@ -146,73 +154,130 @@ end
 
 % --- Knappen 'Lägg till brus'. 
 function laggTillBrus_Callback(hObject, eventdata, handles)
-global EditImage
+global EditImage Regret
 
-EditImage = (Brushantering(EditImage, 'laggtillbrus'));
-workmenu;
-imshow (EditImage, []);
+if (isempty(Regret))
+   warndlg('Ingen bild vald');
 
-% --- Knappen 'Filtrera brus'. Öppnar val av filtrering och sedan filtrerar
-% bilden.
-function filtreraBrus_Callback(hObject, eventdata, handles)
-global EditImage
+else
+choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
 
-EditImage = (Brushantering(EditImage, 'filtrerabrus'));
-workmenu;
-imshow(EditImage, []);
+%Gaussiskt brus.
+if (choice == 1)
+    workmenu
+    EditImage =imnoise(Regret, 'gaussian');
+    imshow(EditImage, []);
+end
 
+%Poissonbrus.
+if (choice == 2)
+    def = {'10'};
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer > 0)
+    workmenu
+    EditImage = (10^(answer)) * imnoise(Regret/(10^(answer)), 'poisson');
+    end
+    imshow(EditImage, []);
+end
 
-% --------------- Förhandsgranskningsfönster ---------------
+%Salt & pepper-brus.
+if (choice == 3)
+    def = {'0.05'};
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer > 0)
+    workmenu
+    EditImage = imnoise(Regret, 'Salt & Pepper', answer);
+    imshow(EditImage, []);
+    end
+end
+end
 
-function [] = workmenu()
-f = figure('MenuBar','None');
+function []=workmenu()
+f=figure('MenuBar','None');
 
-% --- Knappen 'Acceptera'.
+%Create pop up menu
 pp = uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
     'pos',[0 250 100 20], ...
-    'Callback', @acceptImage);
-
-% --- Knappen 'Avbryt'.
+    'Callback', @imageview);
 pp2 = uicontrol(f,'Style','Pushbutton','string',{'Avbryt'},...
     'pos',[0 200 100 20], ...
-    'Callback' , @denyImage);
+    'Callback' , @imagedelete);
 
-% --- Funktion stänger förhandsgranskningsfönstret och behåller ändringarna
-% i förhandsgranskningen.
-function acceptImage(src, callbackdata)
-global EditImage RegretImage
+function imageview(src, callbackdata)
+global EditImage Regret
 
-RegretImage = EditImage;
+Regret = EditImage;
 delete(gcf);
 imshow(EditImage, []);
 
-% --- Funktion som stänger förhandsgranskningsfönstret och tar bort
-% ändringarna i förhandgranskningen.
-function denyImage(src,callbackdata)
-global EditImage RegretImage
 
+function imagedelete(src,callbackdata)
+global EditImage Regret
+
+% Close request function
+%to display a question dialog box
 selection = questdlg('Är du säker på att du vill ångra detta steg?',...
     'Close Request Function',...
     'Ja','Nej','Ja');
 switch selection,
     case 'Ja',
-        EditImage = RegretImage;
+        EditImage = Regret;
         delete(gcf);
     case 'Nej'
         return
 end
 
+% Utkommenterad funktion som vi misstänker ej används. Om allt fuckas:
+% testa att kommentera in.
+%function []=newopen(varargin)
+%workmenu
+
+% --- Knappen 'Filtrera brus'. Öppnar val av filtrering och sedan filtrerar
+% bilden.
+function filtreraBrus_Callback(hObject, eventdata, handles)
+global EditImage Regret
+
+if (isempty(Regret))
+     warndlg('Det finns ingen bild att filtrera')
+else
+    choice = menu('Välj filter','Wienerfilter','Linjärfilter');
+
+%Wienerfilter.
+if (choice == 1)
+    def = {'3'};
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer > 0)
+    workmenu
+    EditImage = wiener2(Regret,[answer answer]);
+    end
+end
+%Linjärfilter.
+if (choice == 2)
+    def = {'2'};
+    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if(answer > 0)
+    matrix = matrisfix(answer);
+    workmenu
+    EditImage = conv2(Regret, matrix, 'same');
+    end
+end
+end
+
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
 function spara_Callback(hObject, eventdata, handles)
-global EditImage RegretImage
+global EditImage Regret
 
 if (isempty (EditImage))
-    temp = RegretImage;
+    temp = Regret;
 else
     temp = EditImage;
 end
 
-choice = menu('Välj format som bilden ska sparas i', 'DICOM', 'JPEG');
+choice = menu('Välj format som filen ska sparas i', 'DICOM', 'JPEG');
 if (choice == 1)
     FileName = uiputfile('*.dcm');
     dicomwrite(temp, FileName);
@@ -238,9 +303,11 @@ end
 
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
-global EditImage RegretImage
 
-if (isempty(RegretImage))
+
+global EditImage Regret
+
+if (isempty(Regret))
      warndlg('Det finns ingen bild att segmentera')
 else
 choice = menu('Välj segmenteringsmetod','Fuzzy Logic','Watershed');
@@ -248,8 +315,8 @@ choice = menu('Välj segmenteringsmetod','Fuzzy Logic','Watershed');
 %Fuzzy Logic
 if (choice == 1)
     def = {'3'};
-    stringAnswer = inputdlg('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
-    answer = str2double(stringAnswer);
+    x = inputdlg('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
+    answer = str2double(x);
     if (answer > 0)
     workmenu
     
@@ -259,6 +326,7 @@ if (choice == 1)
     [EditImage, sls] = fuzzy2(EditImage,imgfcm,0.5);
     
     end
+
 end
 
 %Watershed
@@ -267,27 +335,28 @@ if (choice == 2)
     dlg_title = 'Ange parametrar för Watershed';
     num_lines = 1;
     def = {'4','10'};
-    stringAnswer = inputdlg(prompt,dlg_title,num_lines,def);
-    answer = str2double(stringAnswer);
+    x = inputdlg(prompt,dlg_title,num_lines,def);
+
+    answer = str2double(x);
     if(answer > 0)
     workmenu
-    EditImages = WatershedJ(RegretImage,answer);
+    EditImage = WatershedJ(Regret,answer);
     end
     
-    imshow(RegretImage, [])
+    imshow(Regret, [])
     hold on
-    himage = imshow(EditImages);
+    himage = imshow(EditImage);
     himage.AlphaData = 0.2;
     title('Bilden segmenterad med Watershed')
     
-    EditImage = imfuse(RegretImage,EditImages,'blend','Scaling','joint');
+    EditImage = imfuse(Regret,EditImage,'blend','Scaling','joint');
 end
 end
 
 
 % --- Knappen 'Avsluta'. Stänger programmet.
 function avsluta_Callback(hObject, eventdata, handles)
-
+global EditImage Regret RescaledImage
 clearvars -global
 close();
 
