@@ -27,7 +27,7 @@ se2 = strel(ones(5,5));
 fgm2 = imclose(fgm, se2);
 fgm3 = imerode(fgm2, se2);
 
-fgm4 = bwareaopen(fgm3, pixlar(2,1)); %10
+fgm4 = bwareaopen(fgm3, pixlar(2,1)); %10 
 I3 = I;
 I3(fgm4) = 255;
 

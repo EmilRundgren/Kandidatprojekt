@@ -1,5 +1,6 @@
 %För Watershed!
-imshow(I, [])
+function [
+imshow(inbild, [])
 hold on
 himage = imshow(Lrgb);
 himage.AlphaData = 0.2;
@@ -19,5 +20,5 @@ close;
 B = [o,p]; %vektor ERHÅLLNA
 C = intersect(A,B, 'rows'); %SNITTET mellan önskade och erhållna
 
-precision = size(C,1)/size(B,1)
-recall = size(C,1)/size(A,1)
+precision = size(C,1)/size(B,1);
+recall = size(C,1)/size(A,1);

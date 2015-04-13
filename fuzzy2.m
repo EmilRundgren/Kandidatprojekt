@@ -54,13 +54,13 @@ sls(nTi+1,:,:)=u;
 
 imgls=u; %Bilden matilda sen vill ha
 
-imshow(img,[]);
-hold on
-imgt(:,:)=sls(1,:,:);
-contour(imgt,[0 0],'m');
-contour(u,[0 0],'g','linewidth',0.5);
-
-hold off
+% imshow(img,[]);
+% hold on
+% imgt(:,:)=sls(1,:,:);
+% contour(imgt,[0 0],'m');
+% contour(imgls,[0 0],'g','linewidth',0.5);
+% 
+% hold off
 
 
 

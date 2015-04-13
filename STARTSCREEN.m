@@ -77,7 +77,7 @@ varargout{1} = handles.output;
 function TWOD_Callback(hObject, eventdata, handles)
 close();
 
-TBMT41_2D
+MAINSCREEN_2D;
 % hObject    handle to TWOD (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

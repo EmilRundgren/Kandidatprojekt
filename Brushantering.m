@@ -1,3 +1,4 @@
+
 % --------------- DELSYSTEM 2 - BRUSHANTERING ---------------
 
 % Funktion som anropar önskad brushanteringsfunktion.
@@ -17,7 +18,11 @@ function [utbild] = laggTillBrus(inbild)
 if (isempty(inbild))
      warndlg('Det finns ingen bild att modifiera');
 else
-choice = menu('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
+choice = knappmeny('Välj brus', 'Gaussiskt','Poisson','Salt & Pepper');
+
+if (choice == 0)
+    utbild = inbild;
+end
 
 %Gaussiskt brus.
 if (choice == 1)
@@ -27,7 +32,7 @@ end
 %Poissonbrus.
 if (choice == 2)
     def = {'10'};
-    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, def);
+    stringAnswer = inputdlg2('Ange parameter (vanligtvis mellan 9-12):', 'Parametervärde', 1, def);
     answer = str2double(stringAnswer);
     if (answer > 0)
     utbild = (10^(answer)) * imnoise(inbild/(10^(answer)), 'poisson');
@@ -37,7 +42,7 @@ end
 %Salt & pepper-brus.
 if (choice == 3)
     def = {'0.05'};
-    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
+    stringAnswer = inputdlg2('Ange parameter (vanligtvis mellan 0.1-0.001', 'Parametervärde', 1, def);
     answer = str2double(stringAnswer);
     if (answer > 0)
     utbild = imnoise(inbild, 'Salt & Pepper', answer);
@@ -51,12 +56,16 @@ function [utbild] = filtreraBrus(inbild)
 if (isempty(inbild))
      warndlg('Det finns ingen bild att filtrera')
 else
-    choice = menu('Välj filter','Wienerfilter','Linjärfilter');
+    choice = knappmeny('Välj filter','Wienerfilter','Linjärfilter');
+    
+if (choice == 0)
+utbild = inbild;
+end
 
 %Wienerfilter.
 if (choice == 1)
     def = {'3'};
-    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
+    stringAnswer = inputdlg2('Ange parameter (vanligtvis mellan 1-10)', 'Parametervärde', 1, def);
     answer = str2double(stringAnswer);
     if (answer > 0)
     utbild = wiener2(inbild ,[answer answer]);
@@ -66,7 +75,7 @@ end
 %Linjärfilter.
 if (choice == 2)
     def = {'2'};
-    stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
+    stringAnswer = inputdlg2('Ange parameter (vanligtvis mellan 2-5', 'Parametervärde', 1, def);
     answer = str2double(stringAnswer);
     if(answer > 0)
     matrix = matrisfix(answer);
