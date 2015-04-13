@@ -85,6 +85,8 @@ MAINSCREEN_2D;
 
 % --- Executes on button press in THREED.
 function THREED_Callback(hObject, eventdata, handles)
+close();
+TBMT41_3D;
 % hObject    handle to THREED (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
