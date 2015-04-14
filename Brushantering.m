@@ -26,7 +26,13 @@ end
 
 %Gaussiskt brus.
 if (choice == 1)
-    utbild = imnoise(inbild, 'gaussian');
+    def = {'0','0.01'};
+    prompt = {'Ange medelvärde:','Ange varians:'};
+    stringAnswer = inputdlg2(prompt, 'Parametervärde', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer >= 0)
+   utbild = imnoise(inbild, 'gaussian', answer(1,1), answer(2,1));
+    end
 end
 
 %Poissonbrus.
