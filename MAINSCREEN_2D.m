@@ -150,7 +150,7 @@ end
 
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
-global EditImage RegretImage
+global EditImage RegretImage WatershedImage
 
 [temp, metod, sls] = Segmentering(EditImage);
 
@@ -169,64 +169,12 @@ contour(EditImage, [0 0], 'g', 'linewidth', 0.5);
 hold off
 
 elseif (isequal(metod, 2));
-imshow(RegretImage, []);
-hold on
-%imshow(EditImage, []);
-himage = imshow(EditImage, []);
-%himage.AlphaDataMapping = 'scaled';
-himage.AlphaData = 0.2;
-hold off
-%EditImage = imfuse(RegretImage,EditImage,'blend','Scaling','joint');
-%imshow(EditImage, []);
+    
+WatershedImage = EditImage;
+EditImage = imfuse(RegretImage,0.3.*EditImage,'blend','Scaling','joint');
+imshow(EditImage, []);
 end
     
-% if (isempty(EditImage))
-%      warndlg('Det finns ingen bild att segmentera')
-% else
-% choice = knappmeny('Välj segmenteringsmetod','Fuzzy Logic','Watershed');
-% 
-% %Fuzzy Logic
-% if (choice == 1)
-%     def = {'3'};
-%     stringAnswer = inputdlg2('Ange antal kluster (vanligtvis mellan 2-5)', 'Parametervärde', 1, def);
-%     answer = str2double(stringAnswer);
-%     if (answer > 0)
-%     previewMenu
-%     
-%     MF = SFCM2D(EditImage,answer);
-%     imgfcm=reshape(MF(1,:,:),size(EditImage,1),size(EditImage,2));
-%     sls = [];
-%     [EditImage, sls] = fuzzy2(EditImage,imgfcm,0.5);
-%     
-%     end
-% end
-% 
-% %Watershed
-% if (choice == 2)
-%     prompt = {'Ange parameter för strel:','Ta bort segment med färre pixlar än:'};
-%     dlg_title = 'Ange parametrar för Watershed';
-%     num_lines = 1;
-%     def = {'4','10'};
-%     
-%     stringAnswer = inputdlg2(prompt,dlg_title,num_lines,def);
-%     answer = str2double(stringAnswer);
-%     
-%     if(answer > 0)
-%     previewMenu
-%     EditImages = WatershedJ(RegretImage,answer);
-%     imshow(EditImages, []);
-%     end
-%     
-%     imshow(RegretImage, [])
-%     hold on
-%     himage = imshow(EditImages);
-%     himage.AlphaData = 0.2;
-%     %title('Bilden segmenterad med Watershed')
-%     
-%     EditImage = imfuse(RegretImage,EditImages,'blend','Scaling','joint');
-%     imshow(EditImage, []);
-% end
-% end
 
 % =========================================================================
 % ----------------------- ÖVRIGA FUNKTIONER -------------------------------
@@ -241,8 +189,8 @@ imcontrast;
 function jamforMedOriginal_Callback(hObject, eventdata, handles)
 global RescaledImage EditImage
 
-if (isempty(EditImage) || isempty(RescaledImage))
-warndlg('Ingen bild att jämföra med.')
+if (isequal(RescaledImage, EditImage))
+msgbox('Det finns ingen bild att jämföra med', 'Fel', 'error');
 
 else   
 f = figure('Name', 'Jämförelse', ...
@@ -268,22 +216,23 @@ end
 
 % --- Knappen 'Återgå till original'.
 function atergaTillOriginal_Callback(hObject, eventdata, handles)
-global RescaledImage RegretImage EditImage
+global RescaledImage RegretImage EditImage WatershedImage
 
 if (isempty(RescaledImage))
-    warndlg('Inget att återgå till')
+    msgbox('Det finns ingen bild att återgå till', 'Fel', 'error');
 else
 RegretImage = RescaledImage;
 EditImage = RescaledImage;
+WatershedImage = [];
 imshow(RescaledImage, []);
 end
 
 % --- Knappen 'Utvärdera'.
 function utvardera_Callback(hObject, eventdata, handles)
-global RescaledImage EditImage 
+global RescaledImage EditImage WatershedImage
 
 if (isequal(RescaledImage,EditImage) || isempty(EditImage))
-   warndlg('Inget att utvärdera');
+   msgbox('Det finns inget att utvärdera', 'Fel', 'error');
 else
     choice = knappmeny('Välj utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
     if (choice == 1)
@@ -297,8 +246,17 @@ else
     end
 
     if (choice == 3)
-        previewMenu
-        imshow(EditImage, []);
+        if (ndims(EditImage) > 2)
+            if (isempty(WatershedImage))
+            msgbox('Du måste segmentera med Watershed först', 'Fel', 'error');
+            else
+            [precision, recall] = precisionAndRecall(RescaledImage, WatershedImage, 'watershed');
+            msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
+            end
+        elseif (ndims(EditImage) == 2)
+            [precision, recall] = precisionAndRecall(RescaledImage, EditImage, 'fuzzylogic');
+            msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
+        end
     end
 end
 
@@ -307,9 +265,8 @@ function granska_Callback(hObject, eventdata, handles)
 global EditImage
 
 if (isempty(EditImage))
-    warndlg('Det finns ingen bild att granska') 
-else
-        
+    msgbox('Det finns ingen bild att granska', 'Fel', 'error') ;
+else   
     f = figure('Name', 'Granskning', ...
     'NumberTitle', 'off', ...
     'Position', [200, 50, 800, 600], ...
@@ -318,10 +275,10 @@ else
 knappBredd = 100;
 knappHojd = 40;
 
-text = uicontrol(f, 'Style', 'pushbutton', 'string', {'Stäng'}, ...
+closeButton = uicontrol(f, 'Style', 'pushbutton', 'string', {'Stäng'}, ...
     'pos', [400-knappBredd/2 10 knappBredd knappHojd], ...
     'callback', 'delete(gcf)');
-set(text, 'FontSize', 12);
+set(closeButton, 'FontSize', 12);
     imshow(EditImage,'InitialMagnification','fit')
 end
 

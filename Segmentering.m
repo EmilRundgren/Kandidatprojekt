@@ -46,13 +46,6 @@ if (choice == 2)
     metod = 2;
     sls = [];
     end
-    
-%     imshow(RegretImage, [])
-%     hold on
-%     himage = imshow(EditImages);
-%     himage.AlphaData = 0.2;
-%     %title('Bilden segmenterad med Watershed')
-%     
-%     EditImage = imfuse(RegretImage,EditImages,'blend','Scaling','joint');
+  
 end
 end
