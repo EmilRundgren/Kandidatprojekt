@@ -4,6 +4,10 @@ skarmStorlek = get(groot, 'ScreenSize');
 skarmBredd = skarmStorlek(3);
 skarmHojd = skarmStorlek(4);
 
+% --- Startscreen ---
+
+
+% --- Mainscreen ---
 if (ismac)
 mainscreenIndragHojd = 50;
 mainscreenHojd = skarmHojd - mainscreenIndragHojd;
@@ -17,6 +21,11 @@ mainscreenBredd = skarmBredd - 2*mainscreenIndragBredd;
 mainscreenPosX = mainscreenIndragBredd;
 mainscreenPosY = 0;
 
-
+% --- Knappar ---
 knappBredd = 100;
 knappHojd = 40;
+
+% --- Förhandsgranskningsfönster ---
+previewMenu
+
+

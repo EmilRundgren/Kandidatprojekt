@@ -154,6 +154,7 @@ global EditImage RegretImage WatershedImage FuzzyImage
 
 [temp, metod, sls] = Segmentering(EditImage);
 
+
 if (isequal(EditImage, temp));
     return;
 end
@@ -166,13 +167,6 @@ previewMenu;
 FuzzyImage = labeledImage;
 EditImage = imfuse(RegretImage, 0.3.*FuzzyImage, 'blend', 'scaling', 'joint');
 imshow(EditImage, []);
-    
-% imshow(RegretImage,[]);
-% hold on
-% imgt(:,:) = sls(1,:,:);
-% contour(imgt, [0 0], 'm');
-% contour(EditImage, [0 0], 'g', 'linewidth', 0.5);
-% hold off
 
 elseif (isequal(metod, 2));
     
@@ -296,12 +290,33 @@ clearvars -global
 close();
 
 % --- Executes on button press in klippUtSegment.
-%end
+function klippUtSegment_Callback(hObject, eventdata, handles)
+global WatershedImage FuzzyImage RescaledImage
 
-%EXEMPEL FÖR ATT KUNNA CROPPA BILDER, LÅT DET BA LIGGA HÄR
-%I = imcrop(EditImage);
-%imshow(I, []);
+choice = knappmeny('Välj metod', 'Klipp ut själv', 'Klicka på segment');
 
+if (choice == 0)
+    return;
+end
+if (choice == 1)
+if (~isempty(FuzzyImage))
+    klippUtSegment(RescaledImage, FuzzyImage, 1)
+elseif (~isempty(WatershedImage))
+    klippUtSegment(RescaledImage, WatershedImage, 1)
+else
+    msgbox('Du måste utföra en segmentering först', 'Fel', 'error');
+end
+end
+
+if (choice == 2)
+if (~isempty(FuzzyImage))
+    klippUtSegment(RescaledImage, FuzzyImage, 2)
+elseif (~isempty(WatershedImage))
+    klippUtSegment(RescaledImage, WatershedImage, 2)
+else
+    msgbox('Du måste utföra en segmentering först', 'Fel', 'error');
+end
+end
 
 % --- Programtitel i övre delen av huvudfönstret.
 function titeltext_CreateFcn(hObject, eventdata, handles)
