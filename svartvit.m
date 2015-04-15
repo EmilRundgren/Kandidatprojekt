@@ -2,7 +2,7 @@ clear all;
 
 %I = imread('regular_shapes.png');
 %
-I = imread ('bajs.png');
+I = imread ('bajs.jpg');
 
 BW = im2bw(I);
 %

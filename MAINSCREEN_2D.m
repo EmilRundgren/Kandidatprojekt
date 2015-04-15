@@ -150,7 +150,7 @@ end
 
 % --- Knappen 'Segmentera'. 
 function segmentera_Callback(hObject, eventdata, handles)
-global EditImage RegretImage WatershedImage
+global EditImage RegretImage WatershedImage FuzzyImage
 
 [temp, metod, sls] = Segmentering(EditImage);
 
@@ -158,18 +158,24 @@ if (isequal(EditImage, temp));
     return;
 end
 EditImage = temp;
-previewMenu;
 
-if (isequal(metod, 1));
-imshow(RegretImage,[]);
-hold on
-imgt(:,:) = sls(1,:,:);
-contour(imgt, [0 0], 'm');
-contour(EditImage, [0 0], 'g', 'linewidth', 0.5);
-hold off
+if (isequal(metod, 1))
+
+[labeledImage] = fuzzyLogicMenu(RegretImage, EditImage, sls);
+FuzzyImage = labeledImage;
+EditImage = imfuse(RegretImage, 0.6.*FuzzyImage, 'blend', 'scaling', 'joint');
+previewMenu;
+imshow(EditImage, []);
+    
+% imshow(RegretImage,[]);
+% hold on
+% imgt(:,:) = sls(1,:,:);
+% contour(imgt, [0 0], 'm');
+% contour(EditImage, [0 0], 'g', 'linewidth', 0.5);
+% hold off
 
 elseif (isequal(metod, 2));
-    
+previewMenu;
 WatershedImage = EditImage;
 EditImage = imfuse(RegretImage,0.3.*EditImage,'blend','Scaling','joint');
 imshow(EditImage, []);
@@ -229,7 +235,7 @@ end
 
 % --- Knappen 'Utvärdera'.
 function utvardera_Callback(hObject, eventdata, handles)
-global RescaledImage EditImage WatershedImage
+global RescaledImage EditImage WatershedImage FuzzyImage
 
 if (isequal(RescaledImage,EditImage) || isempty(EditImage))
    msgbox('Det finns inget att utvärdera', 'Fel', 'error');
@@ -254,7 +260,7 @@ else
             msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
             end
         elseif (ndims(EditImage) == 2)
-            [precision, recall] = precisionAndRecall(RescaledImage, EditImage, 'fuzzylogic');
+            [precision, recall] = precisionAndRecall(RescaledImage, FuzzyImage, 'fuzzylogic');
             msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
         end
     end
