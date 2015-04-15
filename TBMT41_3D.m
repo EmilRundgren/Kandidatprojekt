@@ -22,7 +22,7 @@ function varargout = TBMT41_3D(varargin)
 
 % Edit the above text to modify the response to help TBMT41_3D
 
-% Last Modified by GUIDE v2.5 31-Mar-2015 15:12:55
+% Last Modified by GUIDE v2.5 14-Apr-2015 09:57:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -118,7 +118,7 @@ if (choice == 2)
 end
 Regret = RescaledImage;
 Orginal = RescaledImage;
-vol3d('cdata', RescaledImage, 'texture', '3D');
+vol3dv2('cdata', RescaledImage, 'texture', '3D');
 colormap(jet(256));
 alphamap('rampup');
 alphamap(0.06*alphamap*contrast);
@@ -176,7 +176,7 @@ end
 function Examine_Image_Callback(hObject, eventdata, handles)
 global RescaledImage voxel_size slice_resolution contrast
 h = figure('units','normalized','outerposition',[0 0 1 1]);
-vol3d('cdata', RescaledImage, 'texture', '3D');
+vol3dv2('cdata', RescaledImage, 'texture', '3D');
 colormap(jet(256));
 alphamap('rampup');
 alphamap(0.06*alphamap*contrast);
@@ -220,17 +220,36 @@ end
 
 % --- Executes on button press in sagaxtran.
 function sagaxtran_Callback(hObject, eventdata, handles)
-global RescaledImage nfile slice_resolution
-sag = squeeze(RescaledImage(:,slice_resolution(2)/2,:));
-ax = squeeze(RescaledImage(slice_resolution(1)/2, :, :));
-trans = squeeze(RescaledImage(:, :, nfile/2));
-set(figure, 'Position', [100, 100, 1049, 895]);
-axes('Position' , [0,0,0.55,1])
-imshow(sag, [])
-axes('Position' , [0.33,0, 0.5, 1])
-imshow(ax, [])
-axes('Position' ,[0.66,0,0.5,1])
-imshow(trans, [])
+global RescaledImage nfile slice_resolution contrast voxel_size
+% sag = squeeze(RescaledImage(:,slice_resolution(2)/2,:));
+% ax = squeeze(RescaledImage(slice_resolution(1)/2, :, :));
+% trans = squeeze(RescaledImage(:, :, nfile/2));
+% set(figure, 'Position', [100, 100, 1049, 895]);
+% axes('Position' , [0,0,0.55,1])
+% imshow(sag, [])
+% axes('Position' , [0.33,0, 0.5, 1])
+% imshow(ax, [])
+% axes('Position' ,[0.66,0,0.5,1])
+% imshow(trans, [])
+figure
+
+slice(RescaledImage, ceil(slice_resolution/2), ceil(slice_resolution/2), ceil(nfile/2));
+colormap(jet(256));
+alphamap('rampup');
+alphamap(0.06*alphamap*contrast);
+set(gca, 'DataAspectRatio', 1./voxel_size);
+set(gca, 'Color', [1 1 1]);
+set(gca, 'zdir', 'reverse');
+xlabel('X [mm]', 'FontSize', 15);
+ylabel('Y [mm]', 'FontSize', 15);
+zlabel('Z [mm]', 'FontSize', 15);
+set(gca, 'xtick', round([0:10:slice_resolution(1)]));
+set(gca, 'xticklabel', round([0:10:slice_resolution(1)]*voxel_size(1)));
+set(gca, 'ytick', round([0:10:slice_resolution(2)]));
+set(gca, 'yticklabel', round([0:10:slice_resolution(2)]*voxel_size(2)));
+set(gca, 'ztick', round([0:100:size(RescaledImage, 3)]));
+set(gca, 'zticklabel', round([0:size(RescaledImage, 3)]*voxel_size(3)));
+drawnow;
 
 
 % hObject    handle to sagaxtran (see GCBO)
@@ -253,7 +272,7 @@ else
             RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian');
         end
         cla
-        vol3d('cdata', RescaledImage, 'texture', '3D');
+        vol3dv2('cdata', RescaledImage, 'texture', '3D');
         colormap(jet(256));
         alphamap('rampup');
         alphamap(0.06*alphamap*contrast);
@@ -280,7 +299,7 @@ else
                 RescaledImage(:,:,i) =(10^(x)) * imnoise(RescaledImage(:,:,i)/(10^(x)), 'poisson');
             end
             cla
-            vol3d('cdata', RescaledImage, 'texture', '3D');
+            vol3dv2('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
             alphamap(0.06*alphamap*contrast);
@@ -308,7 +327,7 @@ else
                 RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'Salt & Pepper', answer);
             end
             cla
-            vol3d('cdata', RescaledImage, 'texture', '3D');
+            vol3dv2('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
             alphamap(0.06*alphamap*contrast);
@@ -355,7 +374,7 @@ else
                 RescaledImage(:,:,i) = wiener2(RescaledImage(:,:,i),[answer answer]);
             end
             cla
-            vol3d('cdata', RescaledImage, 'texture', '3D');
+            vol3dv2('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
             alphamap(0.06*alphamap*contrast);
@@ -384,7 +403,7 @@ else
                 RescaledImage(:,:,i) = conv2(RescaledImage(:,:,i),matrix, 'same');
             end
             cla
-            vol3d('cdata', RescaledImage, 'texture', '3D');
+            vol3dv2('cdata', RescaledImage, 'texture', '3D');
             colormap(jet(256));
             alphamap('rampup');
             alphamap(0.06*alphamap*contrast);
@@ -417,7 +436,7 @@ global RescaledImage Regret Orginal voxel_size slice_resolution contrast
 Regret = Orginal;
 RescaledImage = Orginal;
 cla
-vol3d('cdata', RescaledImage, 'texture', '3D');
+vol3dv2('cdata', RescaledImage, 'texture', '3D');
 colormap(jet(256));
 alphamap('rampup');
 alphamap(0.06*alphamap*contrast);
@@ -469,5 +488,72 @@ else
 end
 
 % hObject    handle to utvardera (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in segmentera.
+function segmentera_Callback(hObject, eventdata, handles)
+global RescaledImage Regret nfile slice_resolution voxel_size contrast
+
+if (isempty(Regret))
+    warndlg('Det finns ingen bild att segmentera')
+else
+choice = menu('Välj segmenteringsmetod','Watershed');
+end
+
+if (choice == 1)
+    prompt = {'Ange parameter för strel:','Ta bort segment med färre pixlar än:'};
+    dlg_title = 'Ange parametrar för Watershed';
+    num_lines = 1;
+    def = {'4','10'};
+    stringAnswer = inputdlg(prompt,dlg_title,num_lines,def);
+    answer = str2double(stringAnswer);
+    if(answer > 0)
+        RescaledImage = WatershedD(Regret,answer,nfile, slice_resolution);
+    end
+    NewRegret = zeros(slice_resolution(1), slice_resolution(2),nfile , 3);
+    for i=1:3
+        for n=1:nfile
+            NewRegret(:,:,n,i) = Regret(:,:,n);
+        end
+    end
+    NewRegret2 = zeros(slice_resolution(1), slice_resolution(2), 3, nfile);
+    for i=1:3
+        for n=1:nfile
+            NewRegret2(:,:,i,n) = NewRegret(:,:,n,i);
+        end
+    end
+    for i=1:nfile
+        %RescaledImage(:,:,i,:) = NewRegret(:,:,i,:) + RescaledImage(:,:,i,:);
+        RescaledImage(:,:,:,i) = imfuse(squeeze(NewRegret2(:,:,:,i)),squeeze(RescaledImage(:,:,:,i)),'blend','Scaling','joint');
+    end
+%    figure(1), imshow(squeeze(RescaledImage(:,:,15,:)))
+    NewImage = zeros(slice_resolution(1), slice_resolution(2), nfile, 3);
+    for i=1:3
+        for n=1:nfile
+            NewImage(:,:,n,i) = RescaledImage(:,:,i,n);
+        end
+    end
+    RescaledImage = NewImage;
+    vol3dv2('cdata', RescaledImage, 'texture', '3D');
+    colormap(jet(256));
+    alphamap('rampup');
+    alphamap(0.06*alphamap*contrast);
+    set(gca, 'DataAspectRatio', 1./voxel_size);
+    set(gca, 'Color', [0 0 0]);
+    set(gca, 'zdir', 'reverse');
+    xlabel('X [mm]', 'FontSize', 15);
+    ylabel('Y [mm]', 'FontSize', 15);
+    zlabel('Z [mm]', 'FontSize', 15);
+    set(gca, 'xtick', [0:10:slice_resolution(1)]);
+    set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+    set(gca, 'ytick', [0:10:slice_resolution(2)]);
+    set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+    set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+    set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
+    drawnow;
+end
+% hObject    handle to segmentera (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
