@@ -162,9 +162,9 @@ EditImage = temp;
 if (isequal(metod, 1))
 
 [labeledImage] = fuzzyLogicMenu(RegretImage, EditImage, sls);
-FuzzyImage = labeledImage;
-EditImage = imfuse(RegretImage, 0.6.*FuzzyImage, 'blend', 'scaling', 'joint');
 previewMenu;
+FuzzyImage = labeledImage;
+EditImage = imfuse(RegretImage, 0.3.*FuzzyImage, 'blend', 'scaling', 'joint');
 imshow(EditImage, []);
     
 % imshow(RegretImage,[]);
@@ -175,6 +175,7 @@ imshow(EditImage, []);
 % hold off
 
 elseif (isequal(metod, 2));
+    
 previewMenu;
 WatershedImage = EditImage;
 EditImage = imfuse(RegretImage,0.3.*EditImage,'blend','Scaling','joint');
@@ -222,7 +223,7 @@ end
 
 % --- Knappen 'Återgå till original'.
 function atergaTillOriginal_Callback(hObject, eventdata, handles)
-global RescaledImage RegretImage EditImage WatershedImage
+global RescaledImage RegretImage EditImage WatershedImage FuzzyImage
 
 if (isempty(RescaledImage))
     msgbox('Det finns ingen bild att återgå till', 'Fel', 'error');
@@ -230,6 +231,7 @@ else
 RegretImage = RescaledImage;
 EditImage = RescaledImage;
 WatershedImage = [];
+FuzzyImage = [];
 imshow(RescaledImage, []);
 end
 
@@ -252,17 +254,16 @@ else
     end
 
     if (choice == 3)
-        if (ndims(EditImage) > 2)
-            if (isempty(WatershedImage))
-            msgbox('Du måste segmentera med Watershed först', 'Fel', 'error');
+            if (~isempty(FuzzyImage))
+            [precision, recall] = precisionAndRecall(RescaledImage, FuzzyImage);
+            msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
+            elseif (~isempty(WatershedImage))
+            [precision, recall] = precisionAndRecall(RescaledImage, WatershedImage);
+            msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
             else
-            [precision, recall] = precisionAndRecall(RescaledImage, WatershedImage, 'watershed');
-            msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
+            msgbox('Du måste utföra en segmentering först', 'Fel', 'error');
             end
-        elseif (ndims(EditImage) == 2)
-            [precision, recall] = precisionAndRecall(RescaledImage, FuzzyImage, 'fuzzylogic');
-            msgbox(['Precision: ' num2str(round(precision*100, 2)) '% , Recall: ' num2str(round(recall*100, 2)) '%']);
-        end
+        
     end
 end
 

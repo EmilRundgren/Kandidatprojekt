@@ -29,10 +29,6 @@ hold off
 
 [yCenter, xCenter] = ginput(1);
 
-%gör om valda koordinater från float till int
-% xint = int32(xCenter);
-% yint = int32(yCenter);
-
 BW = im2bw(segmenteradBild);
 
 if impixel(BW, yCenter, xCenter) == 0;
@@ -40,11 +36,10 @@ if impixel(BW, yCenter, xCenter) == 0;
     BW = im2bw(segmenteradBild);
 end
 
-[labeledImage, num_Obj] = bwlabel(BW, 8);
+labeledImage = bwlabel(BW, 8);
 
-%Leta efter andra pixlar med samma labelvärde som på vald pixel
-%Obj = labeledImage == (labeledImage(xint,yint)); 
 close;
 utbild = label2rgb(labeledImage);
+
 
 
