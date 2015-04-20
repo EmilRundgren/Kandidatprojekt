@@ -469,11 +469,15 @@ if (isempty(RescaledImage) || isempty(Orginal))
 else
     choice = menu('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
     if (choice == 1)
-        PSNR = 0;
-        for i=1:nfile
-                PSNR = PSNR + psnr(RescaledImage(:,:,i),Orginal(:,:,i));
-        end
-        PSNRfinal = PSNR/nfile;
+        hjalp = abs(Orginal - RescaledImage).^2;
+        MSE = sum(hjalp(:))/numel(Orginal);
+     PSNRfinal = 10*log((max(Orginal(:)).^2)/(MSE));
+
+%         PSNR = 0;
+%         for i=1:nfile
+%                 PSNR = PSNR + psnr(RescaledImage(:,:,i),Orginal(:,:,i));
+%         end
+%         PSNRfinal = PSNR/nfile;
         msgbox(['PSNR = ' num2str(PSNRfinal)], 'Peak Signal to Noise Ratio')
     end
 
@@ -512,23 +516,23 @@ if (choice == 1)
     if(answer > 0)
         RescaledImage = WatershedD(Regret,answer,nfile, slice_resolution);
     end
-    NewRegret = zeros(slice_resolution(1), slice_resolution(2),nfile , 3);
-    for i=1:3
-        for n=1:nfile
-            NewRegret(:,:,n,i) = Regret(:,:,n);
-        end
-    end
-    NewRegret2 = zeros(slice_resolution(1), slice_resolution(2), 3, nfile);
-    for i=1:3
-        for n=1:nfile
-            NewRegret2(:,:,i,n) = NewRegret(:,:,n,i);
-        end
-    end
-    for i=1:nfile
+     NewRegret = zeros(slice_resolution(1), slice_resolution(2),nfile , 3);
+     for i=1:3
+         for n=1:nfile
+             NewRegret(:,:,n,i) = Regret(:,:,n);
+         end
+     end
+     NewRegret2 = zeros(slice_resolution(1), slice_resolution(2), 3, nfile);
+     for i=1:3
+         for n=1:nfile
+             NewRegret2(:,:,i,n) = NewRegret(:,:,n,i);
+         end
+     end
+     for i=1:nfile
         %RescaledImage(:,:,i,:) = NewRegret(:,:,i,:) + RescaledImage(:,:,i,:);
         RescaledImage(:,:,:,i) = imfuse(squeeze(NewRegret2(:,:,:,i)),squeeze(RescaledImage(:,:,:,i)),'blend','Scaling','joint');
     end
-%    figure(1), imshow(squeeze(RescaledImage(:,:,15,:)))
+%    figure(1), imshow(squeeze(RescaledImage(:,:,10,:)))
     NewImage = zeros(slice_resolution(1), slice_resolution(2), nfile, 3);
     for i=1:3
         for n=1:nfile
