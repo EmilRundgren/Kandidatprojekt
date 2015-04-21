@@ -75,8 +75,8 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in TWOD.
 function TWOD_Callback(hObject, eventdata, handles)
-close();
 
+close();
 MAINSCREEN_2D;
 % hObject    handle to TWOD (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -85,8 +85,9 @@ MAINSCREEN_2D;
 
 % --- Executes on button press in THREED.
 function THREED_Callback(hObject, eventdata, handles)
+
 close();
-TBMT41_3D;
+MAINSCREEN_3D;
 % hObject    handle to THREED (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
