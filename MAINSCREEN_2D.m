@@ -104,11 +104,13 @@ if (choice == 0)
     return;
 end
 if (choice == 1)
-    FileName = uiputfile('*.dcm');
+    [FileName,PathName] = uiputfile('*.dcm');
+    cd(PathName);
     dicomwrite(temp, FileName);
 end
 if (choice == 2)
-    FileName = uiputfile('*.jpg');
+   [FileName,PathName] = uiputfile('*.jpg');
+    cd(PathName);
     imwrite(temp, FileName);
 end
 
