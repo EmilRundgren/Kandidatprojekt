@@ -1,3 +1,6 @@
+
+% --------------- STARTMENY ---------------
+
 function varargout = STARTSCREEN(varargin)
 % STARTSCREEN MATLAB code for STARTSCREEN.fig
 %      STARTSCREEN, by itself, creates a new STARTSCREEN or raises the existing
@@ -22,7 +25,7 @@ function varargout = STARTSCREEN(varargin)
 
 % Edit the above text to modify the response to help STARTSCREEN
 
-% Last Modified by GUIDE v2.5 25-Mar-2015 12:33:12
+% Last Modified by GUIDE v2.5 22-Apr-2015 09:14:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,21 +76,20 @@ function varargout = STARTSCREEN_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in TWOD.
+% --- Knappen '2D'. Öppnar huvudfönstret för 2D.
 function TWOD_Callback(hObject, eventdata, handles)
 
 close();
 MAINSCREEN_2D;
-% hObject    handle to TWOD (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-
-% --- Executes on button press in THREED.
+% --- Knappen '3D'. Öppnar huvudfönstret för 3D.
 function THREED_Callback(hObject, eventdata, handles)
 
 close();
 MAINSCREEN_3D;
-% hObject    handle to THREED (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Knappen 'Avsluta'.
+function avsluta_Callback(hObject, eventdata, handles)
+
+close();

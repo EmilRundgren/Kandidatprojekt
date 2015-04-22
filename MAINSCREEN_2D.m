@@ -1,7 +1,6 @@
 
 % --------------- DELSYSTEM 3 - GUI (2D) ---------------
 
-
 function varargout = MAINSCREEN_2D(varargin)
 % MAINSCREEN_2D MATLAB code for MAINSCREEN_2D.fig
 %      MAINSCREEN_2D, by itself, creates a new MAINSCREEN_2D or raises the existing
@@ -26,7 +25,7 @@ function varargout = MAINSCREEN_2D(varargin)
 
 % Edit the above text to modify the response to help MAINSCREEN_2D
 
-% Last Modified by GUIDE v2.5 03-Apr-2015 21:18:16
+% Last Modified by GUIDE v2.5 21-Apr-2015 15:32:46
 
 % Begin initialization code - DO NOT EDIT
 
@@ -329,3 +328,10 @@ function titeltext_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in tillbakaTillStartmeny.
+function tillbakaTillStartmeny_Callback(hObject, eventdata, handles)
+clearvars -global
+close();
+STARTSCREEN;

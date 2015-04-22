@@ -1,3 +1,4 @@
+
 % --------------- DELSYSTEM 3 - GUI (3D) ---------------
 
 function varargout = MAINSCREEN_3D(varargin)
@@ -24,7 +25,7 @@ function varargout = MAINSCREEN_3D(varargin)
 
 % Edit the above text to modify the response to help MAINSCREEN_3D
 
-% Last Modified by GUIDE v2.5 20-Apr-2015 14:23:39
+% Last Modified by GUIDE v2.5 21-Apr-2015 15:32:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -531,4 +532,13 @@ function avsluta_Callback(hObject, eventdata, handles)
 clearvars -global
 close();
 
+
+
+
+% --- Executes on button press in tillbakaTillStartmeny.
+function tillbakaTillStartmeny_Callback(hObject, eventdata, handles)
+
+clearvars -global
+close();
+STARTSCREEN;
 
