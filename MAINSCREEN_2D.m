@@ -290,7 +290,7 @@ close();
 
 % --- Executes on button press in klippUtSegment.
 function klippUtSegment_Callback(hObject, eventdata, handles)
-global WatershedImage FuzzyImage RescaledImage
+global WatershedImage FuzzyImage RescaledImage EditImage
 
 choice = knappmeny('Välj metod', 'Klipp ut själv', 'Klicka på segment');
 
@@ -299,9 +299,11 @@ if (choice == 0)
 end
 if (choice == 1)
 if (~isempty(FuzzyImage))
-    klippUtSegment(RescaledImage, FuzzyImage, 1)
+    EditImage = klippUtSegment(RescaledImage, FuzzyImage, EditImage, 1);
+    imshow(EditImage, []);
 elseif (~isempty(WatershedImage))
-    klippUtSegment(RescaledImage, WatershedImage, 1)
+    EditImage = klippUtSegment(RescaledImage, WatershedImage, EditImage, 1);
+    imshow(EditImage, []);
 else
     msgbox('Du måste utföra en segmentering först', 'Fel', 'error');
 end
@@ -309,9 +311,11 @@ end
 
 if (choice == 2)
 if (~isempty(FuzzyImage))
-    klippUtSegment(RescaledImage, FuzzyImage, 2)
+    EditImage = klippUtSegment(RescaledImage, FuzzyImage, EditImage, 2);
+    imshow(EditImage, []);
 elseif (~isempty(WatershedImage))
-    klippUtSegment(RescaledImage, WatershedImage, 2)
+    EditImage = klippUtSegment(RescaledImage, WatershedImage, EditImage, 2);
+    imshow(EditImage, []);
 else
     msgbox('Du måste utföra en segmentering först', 'Fel', 'error');
 end
