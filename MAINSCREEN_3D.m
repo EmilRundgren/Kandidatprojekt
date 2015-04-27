@@ -84,7 +84,7 @@ slice_resolution = [256 256];
 contrast = 1;
 choice = knappmeny('Välj format som filen ska öppnas i', 'DICOM', 'Matris');
 if (choice == 1)
-    PathName= uigetdir;
+    PathName = uigetdir;
     a = dir(PathName);
     isdire = 0;
     for i=1:length(a)
@@ -184,7 +184,7 @@ else
         for i=1:nfile
             RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian');
         end
-        cla
+        cla;
         vol3dv2('cdata', RescaledImage, 'texture', '3D');
         colormap(jet(256));
         alphamap('rampup');

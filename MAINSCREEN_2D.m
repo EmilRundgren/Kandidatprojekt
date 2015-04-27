@@ -72,7 +72,9 @@ function varargout = MAINSCREEN_2D_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
+% =========================================================================
+% ----------------------- SPARA / LADDA -----------------------------------
+% =========================================================================
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
@@ -177,10 +179,16 @@ EditImage = imfuse(RegretImage,0.3.*EditImage,'blend','Scaling','joint');
 imshow(EditImage, []);
 end
     
-
 % =========================================================================
 % ----------------------- ÖVRIGA FUNKTIONER -------------------------------
 % =========================================================================
+
+% --- Knappen 'Tillbaka till startmeny'.
+function tillbakaTillStartmeny_Callback(hObject, eventdata, handles)
+
+clearvars -global
+close();
+STARTSCREEN;
 
 % --- Knappen 'Ändra kontrast'.
 % Kommer inte att vara med?
@@ -284,13 +292,7 @@ set(closeButton, 'FontSize', 12);
     imshow(EditImage,'InitialMagnification','fit')
 end
 
-% --- Knappen 'Avsluta'. Stänger programmet.
-function avsluta_Callback(hObject, eventdata, handles)
-
-clearvars -global
-close();
-
-% --- Executes on button press in klippUtSegment.
+% --- Knappen 'Klipp ut segment'.
 function klippUtSegment_Callback(hObject, eventdata, handles)
 global WatershedImage FuzzyImage RescaledImage EditImage
 
@@ -323,21 +325,16 @@ else
 end
 end
 
+% --- Knappen 'Avsluta'. Stänger programmet.
+function avsluta_Callback(hObject, eventdata, handles)
+
+clearvars -global
+close();
+
+
 % --- Programtitel i övre delen av huvudfönstret.
 function titeltext_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to titeltext (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on button press in tillbakaTillStartmeny.
-function tillbakaTillStartmeny_Callback(hObject, eventdata, handles)
-clearvars -global
-close();
-STARTSCREEN;
