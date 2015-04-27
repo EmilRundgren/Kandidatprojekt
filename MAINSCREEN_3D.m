@@ -79,8 +79,6 @@ varargout{1} = handles.output;
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
 global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal
-
-slice_resolution = [256 256];
 contrast = 1;
 choice = knappmeny('Välj format som filen ska öppnas i', 'DICOM', 'Matris');
 if (choice == 1)
@@ -97,6 +95,7 @@ if (choice == 1)
     file_list = sort(file_list);
     info1 = dicominfo(file_list{1});
     info2 = dicominfo(file_list{2});
+    slice_resolution = [double(info1.Width) double(info1.Height)];
     voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)];
     OriginalImage = zeros(slice_resolution(1), slice_resolution(2), numel(nfile));
     RescaledImage = OriginalImage;
