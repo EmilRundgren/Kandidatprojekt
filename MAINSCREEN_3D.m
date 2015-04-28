@@ -78,11 +78,11 @@ varargout{1} = handles.output;
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
-global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal
+global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal info1
 contrast = 1;
 choice = knappmeny('Välj format som filen ska öppnas i', 'DICOM', 'Matris');
 if (choice == 1)
-    PathName = uigetdir;
+    PathName= uigetdir;
     a = dir(PathName);
     isdire = 0;
     for i=1:length(a)
@@ -141,24 +141,21 @@ drawnow;
 
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
 function spara_Callback(hObject, eventdata, handles)
-global RescaledImage nfile
+global RescaledImage nfile info1
 
 choice = knappmeny('Välj format som filen ska sparas i', 'DICOM', 'Spara som Matris');
 if (choice == 1)
-    FileNamer = uiputfile;
-    FileName = FileNamer(1:end-4);
-    FileNameFinal = sprintf('%c', FileName);
-    isa(FileNameFinal, 'string')
-    isa(FileNameFinal, 'char')
-    FinalFile = FileNameFinal+'2';
-    dicomwrite(squeeze(RescaledImage(:,:,3)), FinalFile);
-    %for i=1:nfile
-     %   FileNameFinal = FileName+int2str(i)
-        %int2str(i)
-        %FileNameFinal = FileName+int2str(i)
-        %FileName = uiputfile('*.dcm')
-        %dicomwrite(squeeze(RescaledImage(:,:,i)), FileName+int2str(i));
-    %end
+    
+    PathName = uigetdir;
+    answer = inputdlg('Välj namn på dicomfilerna:', 'Filnamn', 1);
+    x = cell2mat(answer);
+    cd(PathName);
+    mkdir(x);
+    cd(x);
+    for i=1:nfile
+        baseFileName = strcat(x,int2str(i),'.dcm');
+        dicomwrite(squeeze(RescaledImage(:,:,i)), baseFileName, info1, 'CreateMode', 'copy');
+    end
 end
 if (choice == 2)
     FileName = uiputfile('*.mat');
@@ -183,7 +180,7 @@ else
         for i=1:nfile
             RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian');
         end
-        cla;
+        cla
         vol3dv2('cdata', RescaledImage, 'texture', '3D');
         colormap(jet(256));
         alphamap('rampup');
