@@ -211,12 +211,17 @@ if (isempty(RescaledImage))
     warndlg('Ingen bild vald');
 else
     choice = knappmeny('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
-    
     %Gaussiskt brus.
     if (choice == 1)
+    def = {'0','0.01'};
+    prompt = {'Ange medelvärde:','Ange varians:'};
+    stringAnswer = inputdlg2(prompt, 'Parametervärden', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer(2,1) ~= 0)
         for i=1:nfile
-            RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian');
+            RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian', answer(1,1), answer(2,1));
         end
+    
         cla
         vol3dv2('cdata', RescaledImage, 'texture', '3D');
         colormap(jet(256));
@@ -235,6 +240,7 @@ else
         set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
         set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
         drawnow;
+    end
     end
     if (choice == 2)
         standardparameter = {'10'};
@@ -409,8 +415,10 @@ else
             %        Segment3(:,:,n,i) = Segment2(:,:,i,n);
             %    end
             %end
-            RescaledImage = Segment;
-            RI15 = RescaledImage==8;
+            %RescaledImage = Segment;
+            RI15 = Segment==8;
+            size(Segment)
+            size(RescaledImage)
             V15 = RI15.*Regret;
             cla
             vol3dv2('cdata', RescaledImage, 'texture', '3D');
