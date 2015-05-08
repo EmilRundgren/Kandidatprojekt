@@ -78,20 +78,21 @@ varargout{1} = handles.output;
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
-global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal
-
-slice_resolution = [256 256];
+global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal info1
 contrast = 1;
 
 choice = knappmeny('Välj format som filen ska öppnas i', 'DICOM', 'Matris');
 if (choice == 1)
     PathName = uigetdir;
-    a = dir(PathName);
-    isdire = 0;
-    for i=1:length(a)
-        if (a(i).isdir)
-            isdire = 1 + isdire;
+    if (PathName > 0)
+        a = dir(PathName);
+        isdire = 0;
+        for i=1:length(a)
+            if (a(i).isdir)
+                isdire = 1 + isdire;
+            end
         end
+<<<<<<< HEAD
     end
     nfile = length(a) - isdire;
     file_list = make_file_list(PathName, '*.dcm');
@@ -110,61 +111,114 @@ if (choice == 1)
                 rowscale = nrows/slice_resolution(1);
                 colscale = ncols/slice_resolution(2);
                 voxel_size = voxel_size.*[colscale;rowscale;1.0];
+=======
+        nfile = length(a)- isdire;
+        file_list = make_file_list(PathName, '*.dcm');
+        file_list = sort(file_list);
+        info1 = dicominfo(file_list{1});
+        info2 = dicominfo(file_list{2});
+        if (info1.SliceLocation == info2.SliceLocation)
+            warndlg('"Slice Location" i bilderna är fel');
+        else
+            slice_resolution = [double(info1.Width) double(info1.Height)];
+            voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)];
+            OriginalImage = zeros(slice_resolution(1), slice_resolution(2), numel(nfile));
+            RescaledImage = OriginalImage;
+            cd(PathName)
+            for i=1:nfile
+                if (not(a(i).isdir))
+                    img_original = double(dicomread(file_list{i}));
+                    if i==1
+                        [nrows, ncols, ~] = size(img_original);
+                        rowscale = nrows/slice_resolution(1);
+                        colscale = ncols/slice_resolution(2);
+                        voxel_size = voxel_size.*[colscale;rowscale;1.0];
+                    end
+                    img = imresize(img_original, slice_resolution, 'bilinear');
+                    OriginalImage(:,:,i) = img;
+                    RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
+                end
+>>>>>>> origin/master
             end
-            img = imresize(img_original, slice_resolution, 'bilinear');
-            OriginalImage(:,:,i) = img;
-            RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
         end
+        Regret = RescaledImage;
+        Orginal = RescaledImage;
+        vol3dv2('cdata', RescaledImage, 'texture', '3D');
+        colormap(jet(256));
+        alphamap('rampup');
+        alphamap(0.06*alphamap*contrast);
+        set(gca, 'DataAspectRatio', 1./voxel_size);
+        set(gca, 'Color', [0 0 0]);
+        set(gca, 'zdir', 'reverse');
+        xlabel('X [mm]', 'FontSize', 15);
+        ylabel('Y [mm]', 'FontSize', 15);
+        zlabel('Z [mm]', 'FontSize', 15);
+        set(gca, 'xtick', [0:10:slice_resolution(1)]);
+        set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+        set(gca, 'ytick', [0:10:slice_resolution(2)]);
+        set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+        set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+        set(gca, 'zticklabel', [0:10:size(RescaledImage, 3)]*voxel_size(3));
+        drawnow;
     end
 end
 if (choice == 2)
     [FileName, FilePath] = uigetfile('*.mat');
-    load([FilePath FileName]);
+    if (FileName > 0 || FilePath > 0)
+        load([FilePath FileName]);
+        Regret = RescaledImage;
+        Orginal = RescaledImage;
+        vol3dv2('cdata', RescaledImage, 'texture', '3D');
+        colormap(jet(256));
+        alphamap('rampup');
+        alphamap(0.06*alphamap*contrast);
+        set(gca, 'DataAspectRatio', 1./voxel_size);
+        set(gca, 'Color', [0 0 0]);
+        set(gca, 'zdir', 'reverse');
+        xlabel('X [mm]', 'FontSize', 15);
+        ylabel('Y [mm]', 'FontSize', 15);
+        zlabel('Z [mm]', 'FontSize', 15);
+        set(gca, 'xtick', [0:10:slice_resolution(1)]);
+        set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+        set(gca, 'ytick', [0:10:slice_resolution(2)]);
+        set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+        set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+        set(gca, 'zticklabel', [0:10:size(RescaledImage, 3)]*voxel_size(3));
+        drawnow;
+    end
 end
-Regret = RescaledImage;
-Orginal = RescaledImage;
-vol3dv2('cdata', RescaledImage, 'texture', '3D');
-colormap(jet(256));
-alphamap('rampup');
-alphamap(0.06*alphamap*contrast);
-set(gca, 'DataAspectRatio', 1./voxel_size);
-set(gca, 'Color', [0 0 0]);
-set(gca, 'zdir', 'reverse');
-xlabel('X [mm]', 'FontSize', 15);
-ylabel('Y [mm]', 'FontSize', 15);
-zlabel('Z [mm]', 'FontSize', 15);
-set(gca, 'xtick', [0:10:slice_resolution(1)]);
-set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
-set(gca, 'ytick', [0:10:slice_resolution(2)]);
-set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
-set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
-set(gca, 'zticklabel', [0:10:size(RescaledImage, 3)]*voxel_size(3));
-drawnow;
 
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
 function spara_Callback(hObject, eventdata, handles)
-global RescaledImage nfile
+global RescaledImage nfile info1
 
-choice = knappmeny('Välj format som filen ska sparas i', 'DICOM', 'Spara som Matris');
-if (choice == 1)
-    FileNamer = uiputfile;
-    FileName = FileNamer(1:end-4);
-    FileNameFinal = sprintf('%c', FileName);
-    isa(FileNameFinal, 'string')
-    isa(FileNameFinal, 'char')
-    FinalFile = FileNameFinal+'2';
-    dicomwrite(squeeze(RescaledImage(:,:,3)), FinalFile);
-    %for i=1:nfile
-     %   FileNameFinal = FileName+int2str(i)
-        %int2str(i)
-        %FileNameFinal = FileName+int2str(i)
-        %FileName = uiputfile('*.dcm')
-        %dicomwrite(squeeze(RescaledImage(:,:,i)), FileName+int2str(i));
-    %end
-end
-if (choice == 2)
-    FileName = uiputfile('*.mat');
-    save(FileName, 'RescaledImage');
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald');
+else
+    choice = knappmeny('Välj format som filen ska sparas i', 'DICOM', 'Spara som Matris');
+    if (choice == 1)
+        PathName = uigetdir;
+        if (PathName > 0)
+            answer = inputdlg('Välj namn på dicomfilerna:', 'Filnamn', 1);
+            if (notempty(answer))
+            else
+                x = cell2mat(answer);
+                cd(PathName);
+                mkdir(x);
+                cd(x);
+                for i=1:nfile
+                    baseFileName = strcat(x,int2str(i),'.dcm');
+                    dicomwrite(squeeze(RescaledImage(:,:,i)), baseFileName, info1, 'CreateMode', 'copy');
+                end
+            end
+        end
+    end
+    if (choice == 2)
+        FileName = uiputfile('*.mat');
+        if (FileName > 0)
+            save(FileName, 'RescaledImage');
+        end
+    end
 end
 
 % =========================================================================
@@ -175,17 +229,22 @@ end
 function laggTillBrus_Callback(hObject, eventdata, handles)
 global RescaledImage Regret nfile voxel_size slice_resolution contrast
 
-if (isempty(Regret))
+if (isempty(RescaledImage))
     warndlg('Ingen bild vald');
 else
     choice = knappmeny('Välj brus','Gaussiskt','Poisson','Salt & Pepper');
-    
     %Gaussiskt brus.
     if (choice == 1)
+    def = {'0','0.01'};
+    prompt = {'Ange medelvärde:','Ange varians:'};
+    stringAnswer = inputdlg2(prompt, 'Parametervärden', 1, def);
+    answer = str2double(stringAnswer);
+    if (answer(2,1) ~= 0)
         for i=1:nfile
-            RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian');
+            RescaledImage(:,:,i) = imnoise(RescaledImage(:,:,i), 'gaussian', answer(1,1), answer(2,1));
         end
-        cla;
+    
+        cla
         vol3dv2('cdata', RescaledImage, 'texture', '3D');
         colormap(jet(256));
         alphamap('rampup');
@@ -204,11 +263,12 @@ else
         set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
         drawnow;
     end
+    end
     if (choice == 2)
         standardparameter = {'10'};
         stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, standardparameter);
-        answer = str2double(stringAnswer);
-        if (x > 0)
+        answer = str2double(stringAnswer)
+        if (answer > 0)
             for i=1:nfile
                 RescaledImage(:,:,i) =(10^(answer)) * imnoise(RescaledImage(:,:,i)/(10^(answer)), 'poisson');
             end
@@ -268,8 +328,8 @@ end
 function filtreraBrus_Callback(hObject, eventdata, handles)
 global RescaledImage Regret nfile contrast voxel_size slice_resolution
 
-if (isempty(Regret))
-    warndlg('Det finns ingen bild att filtrera')
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald')
 else
     choice = knappmeny('Välj filter','Wienerfilter','Linjärfilter');
     
@@ -338,46 +398,114 @@ end
 function segmentera_Callback(hObject, eventdata, handles)
 global RescaledImage Regret nfile slice_resolution voxel_size contrast
 
-if (isempty(Regret))
-    warndlg('Det finns ingen bild att segmentera')
+
+
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald')
 else
-choice = knappmeny('Välj segmenteringsmetod','Watershed');
+    choice = menu('Välj segmenteringsmetod','Watershed');
+    
+    if (choice == 1)
+        prompt = {'Ange parameter för strel:','Ta bort segment med färre pixlar än:'};
+        dlg_title = 'Ange parametrar för Watershed';
+        num_lines = 1;
+        def = {'4','10'};
+        stringAnswer = inputdlg(prompt,dlg_title,num_lines,def);
+        if (~isempty(stringAnswer))
+            answer = str2double(stringAnswer);
+            if(answer > 0)
+                Segment = WatershedD(Regret,answer,nfile, slice_resolution);
+            end
+            %     NewRegret = zeros(slice_resolution(1), slice_resolution(2),nfile , 3);
+            %     for i=1:3
+            %         for n=1:nfile
+            %             NewRegret(:,:,n,i) = Regret(:,:,n);
+            %         end
+            %     end
+            %     NewRegret2 = zeros(slice_resolution(1), slice_resolution(2), 3, nfile);
+            %     for i=1:3
+            %         for n=1:nfile
+            %             NewRegret2(:,:,i,n) = NewRegret(:,:,n,i);
+            %         end
+            %     end
+            %for i=1:nfile
+            %    Segment2(:,:,:,i) = imfuse(grs2rgb(squeeze(Regret(:,:,i)), 'jet'),Segment(:,:,:,i),'blend','Scaling','joint');
+            %end
+            %Segment3 = zeros(slice_resolution(1), slice_resolution(2), nfile, 3);
+            %for i=1:3
+            %    for n=1:nfile
+            %        Segment3(:,:,n,i) = Segment2(:,:,i,n);
+            %    end
+            %end
+            %RescaledImage = Segment;
+            RI15 = Segment==8;
+            size(Segment)
+            size(RescaledImage)
+            V15 = RI15.*Regret;
+            cla
+            vol3dv2('cdata', RescaledImage, 'texture', '3D');
+            %cmap = rand(3, 256);
+            %cmap(1,:) = 0;
+            %size(cmap)
+            max(max(max(RescaledImage)))
+            colormap(jet(256));
+            %         colormap(jet(256));
+            %         alphamap('rampup');
+            %         alphamap(0.06*alphamap*contrast);
+            %         set(gca, 'DataAspectRatio', 1./voxel_size);
+            %         set(gca, 'Color', [0 0 0]);
+            %         set(gca, 'zdir', 'reverse');
+            %         xlabel('X [mm]', 'FontSize', 15);
+            %         ylabel('Y [mm]', 'FontSize', 15);
+            %         zlabel('Z [mm]', 'FontSize', 15);
+            %         set(gca, 'xtick', [0:10:slice_resolution(1)]);
+            %         set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+            %         set(gca, 'ytick', [0:10:slice_resolution(2)]);
+            %         set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+            %         set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+            %         set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
+            %         drawnow;
+        end
+    end
 end
 
-if (choice == 1)
-    prompt = {'Ange parameter för strel:','Ta bort segment med färre pixlar än:'};
-    dlg_title = 'Ange parametrar för Watershed';
-    num_lines = 1;
-    def = {'4','10'};
-    stringAnswer = inputdlg(prompt,dlg_title,num_lines,def);
-    answer = str2double(stringAnswer);
-    if(answer > 0)
-        RescaledImage = WatershedD(Regret,answer,nfile, slice_resolution);
-    end
-    NewRegret = zeros(slice_resolution(1), slice_resolution(2),nfile , 3);
-    for i=1:3
-        for n=1:nfile
-            NewRegret(:,:,n,i) = Regret(:,:,n);
+% =========================================================================
+% ----------------------- ÖVRIGA FUNKTIONER -------------------------------
+% =========================================================================
+
+
+% --- Knappen 'Ändra kontrast'.
+% Kommer inte att vara med?
+function andraKontrast_Callback(hObject, eventdata, handles)
+global contrast RescaledImage
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald')
+else
+    def = {'1'};
+    choice = inputdlg('Ange kontrastnivå (vanligtvis mellan 0.50-5)', 'Parametervärde', 1, def);
+    contrast_new = str2double(choice);
+    if (contrast_new > 0)
+        if contrast == 1
+            alphamap(alphamap*contrast_new);
+        else
+            alphamap((alphamap*contrast_new)/contrast);
         end
+        contrast = contrast_new;
     end
-    NewRegret2 = zeros(slice_resolution(1), slice_resolution(2), 3, nfile);
-    for i=1:3
-        for n=1:nfile
-            NewRegret2(:,:,i,n) = NewRegret(:,:,n,i);
-        end
-    end
-    for i=1:nfile
-        %RescaledImage(:,:,i,:) = NewRegret(:,:,i,:) + RescaledImage(:,:,i,:);
-        RescaledImage(:,:,:,i) = imfuse(squeeze(NewRegret2(:,:,:,i)),squeeze(RescaledImage(:,:,:,i)),'blend','Scaling','joint');
-    end
-%    figure(1), imshow(squeeze(RescaledImage(:,:,15,:)))
-    NewImage = zeros(slice_resolution(1), slice_resolution(2), nfile, 3);
-    for i=1:3
-        for n=1:nfile
-            NewImage(:,:,n,i) = RescaledImage(:,:,i,n);
-        end
-    end
-    RescaledImage = NewImage;
+end
+    
+% --- Knappen 'Jämför med original'.
+
+% --- Knappen 'Återgå till original'.
+function atergaTillOriginal_Callback(hObject, eventdata, handles)
+global RescaledImage Regret Orginal voxel_size slice_resolution contrast
+
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald')
+else
+    Regret = Orginal;
+    RescaledImage = Orginal;
+    cla
     vol3dv2('cdata', RescaledImage, 'texture', '3D');
     colormap(jet(256));
     alphamap('rampup');
@@ -397,60 +525,14 @@ if (choice == 1)
     drawnow;
 end
 
-% =========================================================================
-% ----------------------- ÖVRIGA FUNKTIONER -------------------------------
-% =========================================================================
-
-
-% --- Knappen 'Ändra kontrast'.
-% Kommer inte att vara med?
-function andraKontrast_Callback(hObject, eventdata, handles)
-global contrast
-def = {'1'};
-choice = inputdlg('Ange kontrastnivå (vanligtvis mellan 0.50-5)', 'Parametervärde', 1, def);
-contrast_new = str2double(choice);
-if contrast == 1
-    alphamap(alphamap*contrast_new);
-else
-    alphamap((alphamap*contrast_new)/contrast);
-end
-    contrast = contrast_new;
-    
-% --- Knappen 'Jämför med original'.
-
-% --- Knappen 'Återgå till original'.
-function atergaTillOriginal_Callback(hObject, eventdata, handles)
-global RescaledImage Regret Orginal voxel_size slice_resolution contrast
-
-Regret = Orginal;
-RescaledImage = Orginal;
-cla
-vol3dv2('cdata', RescaledImage, 'texture', '3D');
-colormap(jet(256));
-alphamap('rampup');
-alphamap(0.06*alphamap*contrast);
-set(gca, 'DataAspectRatio', 1./voxel_size);
-set(gca, 'Color', [0 0 0]);
-set(gca, 'zdir', 'reverse');
-xlabel('X [mm]', 'FontSize', 15);
-ylabel('Y [mm]', 'FontSize', 15);
-zlabel('Z [mm]', 'FontSize', 15);
-set(gca, 'xtick', [0:10:slice_resolution(1)]);
-set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
-set(gca, 'ytick', [0:10:slice_resolution(2)]);
-set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
-set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
-set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
-drawnow;
-
 % --- Knappen 'Utvärdera'.
 function utvardera_Callback(hObject, eventdata, handles)
 global RescaledImage Orginal nfile
 
-if (isempty(RescaledImage) || isempty(Orginal))
-   warndlg('Inget att utvärdera');
+if (isempty(RescaledImage))
+   warndlg('Ingen bild vald');
 else
-    choice = knappmeny('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
+    choice = knappmeny('Utvärdering','Peak Signal to Noise Ratio','Structural Similarity');
     if (choice == 1)
         PSNR = 0;
         for i=1:nfile
@@ -474,58 +556,66 @@ end
 function granska_Callback(hObject, eventdata, handles)
 global RescaledImage voxel_size slice_resolution contrast
 
-h = figure('units','normalized','outerposition',[0 0 1 1]);
-vol3dv2('cdata', RescaledImage, 'texture', '3D');
-colormap(jet(256));
-alphamap('rampup');
-alphamap(0.06*alphamap*contrast);
-set(gca, 'DataAspectRatio', 1./voxel_size);
-set(gca, 'Color', [0 0 0]);
-set(gca, 'zdir', 'reverse');
-xlabel('X [mm]', 'FontSize', 15);
-ylabel('Y [mm]', 'FontSize', 15);
-zlabel('Z [mm]', 'FontSize', 15);
-set(gca, 'xtick', [0:10:slice_resolution(1)]);
-set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
-set(gca, 'ytick', [0:10:slice_resolution(2)]);
-set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
-set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
-set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
-drawnow;
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald')
+else
+    h = figure('units','normalized','outerposition',[0 0 1 1]);
+    vol3dv2('cdata', RescaledImage, 'texture', '3D');
+    colormap(jet(256));
+    alphamap('rampup');
+    alphamap(0.06*alphamap*contrast);
+    set(gca, 'DataAspectRatio', 1./voxel_size);
+    set(gca, 'Color', [0 0 0]);
+    set(gca, 'zdir', 'reverse');
+    xlabel('X [mm]', 'FontSize', 15);
+    ylabel('Y [mm]', 'FontSize', 15);
+    zlabel('Z [mm]', 'FontSize', 15);
+    set(gca, 'xtick', [0:10:slice_resolution(1)]);
+    set(gca, 'xticklabel', [0:10:slice_resolution(1)]*voxel_size(1));
+    set(gca, 'ytick', [0:10:slice_resolution(2)]);
+    set(gca, 'yticklabel', [0:10:slice_resolution(2)]*voxel_size(2));
+    set(gca, 'ztick', [0:100:size(RescaledImage, 3)]);
+    set(gca, 'zticklabel', [0:size(RescaledImage, 3)]*voxel_size(3));
+    drawnow;
+end
 
 % --- Knappen 'Tvärsnitt'.
 function tvarsnitt_Callback(hObject, eventdata, handles)
 global RescaledImage nfile slice_resolution contrast voxel_size
 
-% sag = squeeze(RescaledImage(:,slice_resolution(2)/2,:));
-% ax = squeeze(RescaledImage(slice_resolution(1)/2, :, :));
-% trans = squeeze(RescaledImage(:, :, nfile/2));
-% set(figure, 'Position', [100, 100, 1049, 895]);
-% axes('Position' , [0,0,0.55,1])
-% imshow(sag, [])
-% axes('Position' , [0.33,0, 0.5, 1])
-% imshow(ax, [])
-% axes('Position' ,[0.66,0,0.5,1])
-% imshow(trans, [])
-figure
-
-slice(RescaledImage, ceil(slice_resolution/2), ceil(slice_resolution/2), ceil(nfile/2));
-colormap(jet(256));
-alphamap('rampup');
-alphamap(0.06*alphamap*contrast);
-set(gca, 'DataAspectRatio', 1./voxel_size);
-set(gca, 'Color', [1 1 1]);
-set(gca, 'zdir', 'reverse');
-xlabel('X [mm]', 'FontSize', 15);
-ylabel('Y [mm]', 'FontSize', 15);
-zlabel('Z [mm]', 'FontSize', 15);
-set(gca, 'xtick', round([0:10:slice_resolution(1)]));
-set(gca, 'xticklabel', round([0:10:slice_resolution(1)]*voxel_size(1)));
-set(gca, 'ytick', round([0:10:slice_resolution(2)]));
-set(gca, 'yticklabel', round([0:10:slice_resolution(2)]*voxel_size(2)));
-set(gca, 'ztick', round([0:100:size(RescaledImage, 3)]));
-set(gca, 'zticklabel', round([0:size(RescaledImage, 3)]*voxel_size(3)));
-drawnow;
+if (isempty(RescaledImage))
+    warndlg('Ingen bild vald')
+else
+    % sag = squeeze(RescaledImage(:,slice_resolution(2)/2,:));
+    % ax = squeeze(RescaledImage(slice_resolution(1)/2, :, :));
+    % trans = squeeze(RescaledImage(:, :, nfile/2));
+    % set(figure, 'Position', [100, 100, 1049, 895]);
+    % axes('Position' , [0,0,0.55,1])
+    % imshow(sag, [])
+    % axes('Position' , [0.33,0, 0.5, 1])
+    % imshow(ax, [])
+    % axes('Position' ,[0.66,0,0.5,1])
+    % imshow(trans, [])
+    figure
+    
+    slice(RescaledImage, ceil(slice_resolution/2), ceil(slice_resolution/2), ceil(nfile/2));
+    colormap(jet(256));
+    alphamap('rampup');
+    alphamap(0.06*alphamap*contrast);
+    set(gca, 'DataAspectRatio', 1./voxel_size);
+    set(gca, 'Color', [1 1 1]);
+    set(gca, 'zdir', 'reverse');
+    xlabel('X [mm]', 'FontSize', 15);
+    ylabel('Y [mm]', 'FontSize', 15);
+    zlabel('Z [mm]', 'FontSize', 15);
+    set(gca, 'xtick', round([0:10:slice_resolution(1)]));
+    set(gca, 'xticklabel', round([0:10:slice_resolution(1)]*voxel_size(1)));
+    set(gca, 'ytick', round([0:10:slice_resolution(2)]));
+    set(gca, 'yticklabel', round([0:10:slice_resolution(2)]*voxel_size(2)));
+    set(gca, 'ztick', round([0:100:size(RescaledImage, 3)]));
+    set(gca, 'zticklabel', round([0:size(RescaledImage, 3)]*voxel_size(3)));
+    drawnow;
+end
 
 % --- Knappen 'Avsluta'.
 function avsluta_Callback(hObject, eventdata, handles)

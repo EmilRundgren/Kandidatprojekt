@@ -30,7 +30,7 @@ if (choice == 1)
     prompt = {'Ange medelvärde:','Ange varians:'};
     stringAnswer = inputdlg2(prompt, 'Parametervärden', 1, def);
     answer = str2double(stringAnswer);
-    if (answer >= 0)
+    if (answer(2,1) ~= 0)
    utbild = imnoise(inbild, 'gaussian', answer(1,1), answer(2,1));
     end
 end
