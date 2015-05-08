@@ -1,37 +1,38 @@
 % --------------- Förhandsgranskningsfönster ---------------
 
 function [] = previewMenu()
+global previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY knappBredd knappHojd
 
-fonsterStorlek = get(groot, 'ScreenSize');
-fonsterBredd = fonsterStorlek(3);
-fonsterHojd = fonsterStorlek(4);
+% fonsterStorlek = get(groot, 'ScreenSize');
+% fonsterBredd = fonsterStorlek(3);
+% fonsterHojd = fonsterStorlek(4);
 
 knappPosX = 10;
-knappBredd = 100;
-knappHojd = 40;
+%knappBredd = 100;
+%knappHojd = 40;
 
-figurBredd = fonsterBredd*(3/5);
-figurHojd = fonsterHojd*(9/10);
-figurPosX = fonsterBredd/2-figurBredd/2;
-figurPosY = fonsterHojd/3;
+% figurBredd = fonsterBredd*(3/5);
+% figurHojd = fonsterHojd*(9/10);
+% figurPosX = fonsterBredd/2-figurBredd/2;
+% figurPosY = fonsterHojd/3;
 
 f = figure('MenuBar','none');
 set(f, 'Name', 'Förhandsgranskning', 'NumberTitle', 'off');
-set(f, 'Position', [figurPosX figurPosY figurBredd figurHojd]);
+set(f, 'Position', [previewMenuPosX previewMenuPosY previewMenuBredd previewMenuHojd]);
 
 % --- Texten 'Vill du behålla dessa ändringar?'
 text = uicontrol(f, 'Style', 'text', 'string', {'Vill du behålla dessa ändringar?'}, ...
-    'pos', [figurBredd/4, figurHojd-1.5*knappHojd, figurBredd/2 knappHojd*(2/3)]);
+    'pos', [previewMenuBredd/4, previewMenuHojd-1.5*knappHojd, previewMenuBredd/2 knappHojd*(2/3)]);
 set(text, 'FontSize', 25);
     
 % --- Knappen 'Acceptera'.
 accepteraKnapp = uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
-    'pos',[knappPosX (figurHojd/2+knappHojd*(2/3)) knappBredd knappHojd], ...
+    'pos',[knappPosX (previewMenuHojd/2+knappHojd*(2/3)) knappBredd knappHojd], ...
     'Callback', @acceptImage);
 
 % --- Knappen 'Avbryt'.
 avbrytKnapp = uicontrol(f,'Style','Pushbutton','string',{'Avbryt'},...
-    'pos',[knappPosX (figurHojd/2-knappHojd*(2/3)) knappBredd knappHojd], ...
+    'pos',[knappPosX (previewMenuHojd/2-knappHojd*(2/3)) knappBredd knappHojd], ...
     'Callback' , @denyImage);
 
 % --- Funktion stänger förhandsgranskningsfönstret och behåller ändringarna

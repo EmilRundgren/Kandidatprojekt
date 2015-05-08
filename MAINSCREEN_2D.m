@@ -49,13 +49,15 @@ end
 
 % --- Executes just before MAINSCREEN_2D is made visible.
 function MAINSCREEN_2D_OpeningFcn(hObject, eventdata, handles, varargin)
+global mainscreenPosX mainscreenPosY mainscreenBredd mainscreenHojd
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to MAINSCREEN_2D (see VARARGIN)
 % Choose default command line output for MAINSCREEN_2D
-handles.output = hObject;
+% MAINSCREEN_2D('Position', [mainscreenPosX mainscreenPosY mainscreenBredd mainscreenHojd]);
+ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -72,19 +74,28 @@ function varargout = MAINSCREEN_2D_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
+% function [] = setPosition()
+% global mainscreenPosX mainscreenPosY mainscreenBredd mainscreenHojd
+% 
+% set(gca, 'Position', [mainscreenPosX mainscreenPosY mainscreenBredd mainscreenHojd]);
+
+
 % =========================================================================
 % ----------------------- SPARA / LADDA -----------------------------------
 % =========================================================================
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
-global RescaledImage OriginalImage RegretImage EditImage;
+global RescaledImage OriginalImage RegretImage EditImage pixelBredd pixelHojd
 
 [FileName, PathName] = uigetfile('*.dcm','browse');
 cd(PathName);
-info = dicominfo(FileName);
+bildInfo = dicominfo(FileName);
+pixelStorlek = bildInfo.PixelSpacing;
+pixelBredd = pixelStorlek(1,1);
+pixelHojd = bildInfo.PixelSpacing(2,1);
 
-OriginalImage = dicomread(info);
+OriginalImage = dicomread(bildInfo);
 RescaledImage = mat2gray(OriginalImage);
 RegretImage = RescaledImage;
 EditImage = RescaledImage;
@@ -191,7 +202,6 @@ close();
 STARTSCREEN;
 
 % --- Knappen 'Ändra kontrast'.
-% Kommer inte att vara med?
 function andraKontrast_Callback(hObject, eventdata, handles)
 imcontrast;
 

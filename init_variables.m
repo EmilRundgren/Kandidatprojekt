@@ -1,4 +1,8 @@
 function [] = init_variables()
+global skarmStorlek skarmBredd skarmHojd ...
+    mainscreenIndragHojd mainscreenIndragBredd mainscreenHojd mainscreenBredd mainscreenPosX mainscreenPosY ...
+    knappBredd knappHojd ...
+    previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY
 
 skarmStorlek = get(groot, 'ScreenSize');
 skarmBredd = skarmStorlek(3);
@@ -26,6 +30,12 @@ knappBredd = 100;
 knappHojd = 40;
 
 % --- Förhandsgranskningsfönster ---
-previewMenu
+previewMenuBredd = skarmBredd*(3/5);
+previewMenuHojd = skarmHojd*(9/10);
+previewMenuPosX = skarmBredd/2 - previewMenuBredd/2;
+previewMenuPosY = skarmHojd/3;
+
+%previewMenuKnappPosX = 10;
+%previewMenuKnappPosY = previewMenuHojd/2 + knappHojd*(2/3);
 
 

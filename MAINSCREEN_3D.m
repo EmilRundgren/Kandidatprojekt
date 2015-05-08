@@ -82,6 +82,7 @@ global RescaledImage voxel_size slice_resolution contrast nfile Regret Orginal
 
 slice_resolution = [256 256];
 contrast = 1;
+
 choice = knappmeny('Välj format som filen ska öppnas i', 'DICOM', 'Matris');
 if (choice == 1)
     PathName = uigetdir;
@@ -92,12 +93,12 @@ if (choice == 1)
             isdire = 1 + isdire;
         end
     end
-    nfile = length(a)- isdire;
+    nfile = length(a) - isdire;
     file_list = make_file_list(PathName, '*.dcm');
     file_list = sort(file_list);
-    info1 = dicominfo(file_list{1});
+    info1 = dicominfo(file_list{1})
     info2 = dicominfo(file_list{2});
-    voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)];
+    voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)]
     OriginalImage = zeros(slice_resolution(1), slice_resolution(2), numel(nfile));
     RescaledImage = OriginalImage;
     cd(PathName)
