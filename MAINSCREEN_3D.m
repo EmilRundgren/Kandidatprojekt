@@ -246,7 +246,7 @@ else
     if (choice == 2)
         standardparameter = {'10'};
         stringAnswer = inputdlg('Ange parameter (vanligtvis mellan 9-12', 'Parametervärde', 1, standardparameter);
-        answer = str2double(stringAnswer)
+        answer = str2double(stringAnswer);
         if (answer > 0)
             for i=1:nfile
                 RescaledImage(:,:,i) =(10^(answer)) * imnoise(RescaledImage(:,:,i)/(10^(answer)), 'poisson');
