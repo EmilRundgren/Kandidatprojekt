@@ -25,7 +25,7 @@ function varargout = MAINSCREEN_2D(varargin)
 
 % Edit the above text to modify the response to help MAINSCREEN_2D
 
-% Last Modified by GUIDE v2.5 21-Apr-2015 15:32:46
+% Last Modified by GUIDE v2.5 08-May-2015 14:30:13
 
 % Begin initialization code - DO NOT EDIT
 
@@ -347,4 +347,61 @@ function titeltext_CreateFcn(hObject, eventdata, handles)
 
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Knappen 'Beräkna area'.
+function beraknaArea_Callback(hObject, eventdata, handles)
+global EditImage FuzzyImage WatershedImage pixelBredd pixelHojd
+
+if (isempty(EditImage))
+    msgbox('Du har inte valt någon bild', 'Fel', 'error') ;
+    
+elseif (isempty(FuzzyImage) && isempty(WatershedImage))
+    msgbox('Du måste utföra en segmentering först', 'Fel', 'error') ;
+    
+else
+fonsterStorlek = get(groot, 'ScreenSize');
+fonsterBredd = fonsterStorlek(3);
+fonsterHojd = fonsterStorlek(4);
+
+knappHojd = 40;
+
+figurBredd = fonsterBredd*(3/5);
+figurHojd = fonsterHojd*(9/10);
+figurPosX = fonsterBredd/2-figurBredd/2;
+figurPosY = fonsterHojd/3;
+
+f = figure('MenuBar','none');
+set(f, 'Name', 'Klipp ut segment', 'NumberTitle', 'off');
+set(f, 'Position', [figurPosX figurPosY figurBredd figurHojd]);
+
+text = uicontrol(f, 'Style', 'text', 'string', {'Välj segment för areaberäkning'}, ...
+'pos', [figurBredd/4, figurHojd-1.5*knappHojd, figurBredd/2 knappHojd*(2/3)]);
+set(text, 'FontSize', 25);
+
+imshow(EditImage, []);
+
+[c,r] = ginput(1);
+grayimage = rgb2gray(FuzzyImage);
+pixel_value = impixel(grayimage,c,r);
+value = pixel_value(1);
+[n, m] = find(grayimage == value);
+B = [n,m]; %vektor ÖNSKADE
+o = min(n);
+p = min(m);
+q = max(m);
+r = max(n);
+s = q - p;
+t = r - o;
+
+L = imcrop(grayimage, [p o s t]);
+BW = L == value;
+
+pixelArea = pixelBredd*pixelHojd;
+summaSegmentKolonner = sum(pixelArea.*BW);
+segmentArea = sum(summaSegmentKolonner);
+close();
+
+msgbox(['Area = ' num2str(round(segmentArea, 2)) ' areaenheter'], 'Area')
 end

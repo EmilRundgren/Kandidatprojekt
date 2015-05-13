@@ -87,6 +87,7 @@ MAINSCREEN_2D;
 function THREED_Callback(hObject, eventdata, handles)
 
 close();
+init_variables;
 MAINSCREEN_3D;
 
 

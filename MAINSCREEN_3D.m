@@ -92,26 +92,6 @@ if (choice == 1)
                 isdire = 1 + isdire;
             end
         end
-<<<<<<< HEAD
-    end
-    nfile = length(a) - isdire;
-    file_list = make_file_list(PathName, '*.dcm');
-    file_list = sort(file_list);
-    info1 = dicominfo(file_list{1})
-    info2 = dicominfo(file_list{2});
-    voxel_size = [info1.PixelSpacing;  abs(info2.SliceLocation - info1.SliceLocation)]
-    OriginalImage = zeros(slice_resolution(1), slice_resolution(2), numel(nfile));
-    RescaledImage = OriginalImage;
-    cd(PathName)
-    for i=1:nfile
-        if (not(a(i).isdir))
-            img_original = double(dicomread(file_list{i}));
-            if i==1
-                [nrows, ncols, ~] = size(img_original);
-                rowscale = nrows/slice_resolution(1);
-                colscale = ncols/slice_resolution(2);
-                voxel_size = voxel_size.*[colscale;rowscale;1.0];
-=======
         nfile = length(a)- isdire;
         file_list = make_file_list(PathName, '*.dcm');
         file_list = sort(file_list);
@@ -138,7 +118,6 @@ if (choice == 1)
                     OriginalImage(:,:,i) = img;
                     RescaledImage(:,:,i) = mat2gray(OriginalImage(:,:,i));
                 end
->>>>>>> origin/master
             end
         end
         Regret = RescaledImage;
