@@ -3,30 +3,12 @@
 function [] = previewMenu()
 global previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY knappBredd knappHojd
 
-% fonsterStorlek = get(groot, 'ScreenSize');
-% fonsterBredd = fonsterStorlek(3);
-% fonsterHojd = fonsterStorlek(4);
-
 knappPosX = 10;
-%knappBredd = 100;
-%knappHojd = 40;
 
-% figurBredd = fonsterBredd*(3/5);
-% figurHojd = fonsterHojd*(9/10);
-% figurPosX = fonsterBredd/2-figurBredd/2;
-% figurPosY = fonsterHojd/3;
-
-f = figure('MenuBar','none');
-set(f, 'Name', 'Förhandsgranskning', 'NumberTitle', 'off');
-set(f, 'Position', [previewMenuPosX previewMenuPosY previewMenuBredd previewMenuHojd]);
-
-% --- Texten 'Vill du behålla dessa ändringar?'
-text = uicontrol(f, 'Style', 'text', 'string', {'Vill du behålla dessa ändringar?'}, ...
-    'pos', [previewMenuBredd/4, previewMenuHojd-1.5*knappHojd, previewMenuBredd/2 knappHojd*(2/3)]);
-set(text, 'FontSize', 25);
+f = createWindow(previewMenuBredd, previewMenuHojd, previewMenuPosX, previewMenuPosY, 'Förhandsgranskning', 'Vill du behålla dessa ändringar?');
     
-% --- Knappen 'Acceptera'.
-accepteraKnapp = uicontrol(f,'Style','Pushbutton','string',{'Acceptera'},...
+% --- Knappen 'OK'.
+accepteraKnapp = uicontrol(f,'Style','Pushbutton','string',{'OK'},...
     'pos',[knappPosX (previewMenuHojd/2+knappHojd*(2/3)) knappBredd knappHojd], ...
     'Callback', @acceptImage);
 

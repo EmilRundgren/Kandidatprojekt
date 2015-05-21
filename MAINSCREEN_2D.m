@@ -58,6 +58,8 @@ global mainscreenPosX mainscreenPosY mainscreenBredd mainscreenHojd
 % Choose default command line output for MAINSCREEN_2D
 % MAINSCREEN_2D('Position', [mainscreenPosX mainscreenPosY mainscreenBredd mainscreenHojd]);
  handles.output = hObject;
+ %Initialiseringsfil som körs för att hämta variabelvärden.
+ init_variables;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -86,7 +88,7 @@ varargout{1} = handles.output;
 
 % --- Knappen 'Ladda in bild'.
 function laddaInBild_Callback(hObject, eventdata, handles)
-global RescaledImage OriginalImage RegretImage EditImage pixelBredd pixelHojd
+global RescaledImage OriginalImage RegretImage EditImage pixelBredd pixelHojd bildInfo
 
 [FileName, PathName] = uigetfile('*.dcm','browse');
 cd(PathName);
@@ -103,7 +105,7 @@ imshow(EditImage, []);
 
 % --- Knappen 'Spara'. Sparar bild till Matlabkatalogen.
 function spara_Callback(hObject, eventdata, handles)
-global EditImage RegretImage
+global EditImage RegretImage bildInfo
 
 if (isempty (EditImage))
     temp = RegretImage;
@@ -119,7 +121,7 @@ end
 if (choice == 1)
     [FileName,PathName] = uiputfile('*.dcm');
     cd(PathName);
-    dicomwrite(temp, FileName);
+    dicomwrite(temp, FileName, bildInfo);
 end
 if (choice == 2)
    [FileName,PathName] = uiputfile('*.jpg');
@@ -257,12 +259,12 @@ if (isequal(RescaledImage,EditImage) || isempty(EditImage))
 else
     choice = knappmeny('Välj utvärdering','Peak Signal to Noise Ratio','Structural Similarity','Precision and Recall');
     if (choice == 1)
-        PSNR = psnr(EditImage,RescaledImage);
+        PSNR = psnr(RescaledImage, EditImage);
         msgbox(['PSNR = ' num2str(PSNR)], 'Peak Signal to Noise Ratio')
     end
 
     if (choice == 2)
-        SSIM = ssim(EditImage, RescaledImage);
+        SSIM = ssim(RescaledImage, EditImage);
         msgbox(['SSIM = ' num2str(SSIM)], 'Structural Similarity')
     end
 
@@ -352,7 +354,8 @@ end
 
 % --- Knappen 'Beräkna area'.
 function beraknaArea_Callback(hObject, eventdata, handles)
-global EditImage FuzzyImage WatershedImage pixelBredd pixelHojd
+global EditImage FuzzyImage WatershedImage pixelBredd pixelHojd ...
+    previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY
 
 if (isempty(EditImage))
     msgbox('Du har inte valt någon bild', 'Fel', 'error') ;
@@ -361,29 +364,19 @@ elseif (isempty(FuzzyImage) && isempty(WatershedImage))
     msgbox('Du måste utföra en segmentering först', 'Fel', 'error') ;
     
 else
-fonsterStorlek = get(groot, 'ScreenSize');
-fonsterBredd = fonsterStorlek(3);
-fonsterHojd = fonsterStorlek(4);
 
-knappHojd = 40;
-
-figurBredd = fonsterBredd*(3/5);
-figurHojd = fonsterHojd*(9/10);
-figurPosX = fonsterBredd/2-figurBredd/2;
-figurPosY = fonsterHojd/3;
-
-f = figure('MenuBar','none');
-set(f, 'Name', 'Klipp ut segment', 'NumberTitle', 'off');
-set(f, 'Position', [figurPosX figurPosY figurBredd figurHojd]);
-
-text = uicontrol(f, 'Style', 'text', 'string', {'Välj segment för areaberäkning'}, ...
-'pos', [figurBredd/4, figurHojd-1.5*knappHojd, figurBredd/2 knappHojd*(2/3)]);
-set(text, 'FontSize', 25);
+%Fönster för areaberäkning skapas.
+f = createWindow(previewMenuBredd, previewMenuHojd, previewMenuPosX, previewMenuPosY, 'Beräkna area', 'Välj segment för areaberäkning');
 
 imshow(EditImage, []);
 
+%Utplockning av segmentmask.
 [c,r] = ginput(1);
+if(~isempty(FuzzyImage))
 grayimage = rgb2gray(FuzzyImage);
+else
+grayimage = rgb2gray(WatershedImage);
+end
 pixel_value = impixel(grayimage,c,r);
 value = pixel_value(1);
 [n, m] = find(grayimage == value);
@@ -398,6 +391,7 @@ t = r - o;
 L = imcrop(grayimage, [p o s t]);
 BW = L == value;
 
+%Beräkning av area.
 pixelArea = pixelBredd*pixelHojd;
 summaSegmentKolonner = sum(pixelArea.*BW);
 segmentArea = sum(summaSegmentKolonner);

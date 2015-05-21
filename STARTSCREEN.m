@@ -80,14 +80,12 @@ varargout{1} = handles.output;
 function TWOD_Callback(hObject, eventdata, handles)
 
 close();
-init_variables;
 MAINSCREEN_2D;
 
 % --- Knappen '3D'. Öppnar huvudfönstret för 3D.
 function THREED_Callback(hObject, eventdata, handles)
 
 close();
-init_variables;
 MAINSCREEN_3D;
 
 

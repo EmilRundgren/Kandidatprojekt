@@ -1,26 +1,10 @@
 function [utbild] = klippUtSegment(originalbild, fargbild, editimage, metod)
-
-fonsterStorlek = get(groot, 'ScreenSize');
-fonsterBredd = fonsterStorlek(3);
-fonsterHojd = fonsterStorlek(4);
-
-knappHojd = 40;
-
-figurBredd = fonsterBredd*(3/5);
-figurHojd = fonsterHojd*(9/10);
-figurPosX = fonsterBredd/2-figurBredd/2;
-figurPosY = fonsterHojd/3;
-
-f = figure('MenuBar','none');
-set(f, 'Name', 'Klipp ut segment', 'NumberTitle', 'off');
-set(f, 'Position', [figurPosX figurPosY figurBredd figurHojd]);
+global previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY
 
 if metod == 1
     
-    % --- Texten 'Rita ett segment av intresse'
-    text = uicontrol(f, 'Style', 'text', 'string', {'Rita ett segment av intresse'}, ...
-    'pos', [figurBredd/4, figurHojd-1.5*knappHojd, figurBredd/2 knappHojd*(2/3)]);
-    set(text, 'FontSize', 25);
+    %Fönster för ritning av segment skapas.
+    f = createWindow(previewMenuBredd, previewMenuHojd, previewMenuPosX, previewMenuPosY, 'Klipp ut segment', 'Rita segment av intresse');
     
     handleBild = imshow(editimage);
     handleOmrade = imfreehand(gca);
@@ -39,10 +23,9 @@ if metod == 1
     utbild = imcrop(J,[p o s t]);
     close();
 else 
-    % --- Texten 'Klicka på ett segment av intresse'
-    text = uicontrol(f, 'Style', 'text', 'string', {'Klicka på ett segment av intresse'}, ...
-    'pos', [figurBredd/4, figurHojd-1.5*knappHojd, figurBredd/2 knappHojd*(2/3)]);
-    set(text, 'FontSize', 25);
+
+    %Fönster för klickning på segment skapas.
+    f = createWindow(previewMenuBredd, previewMenuHojd, previewMenuPosX, previewMenuPosY, 'Klipp ut segment', 'Klicka på ett segment av intresse');
     
     imshow(editimage, []);
     [c,r] = ginput(1); %levererar koordinater för där man klickar
