@@ -2,7 +2,8 @@ function [] = init_variables()
 global skarmStorlek skarmBredd skarmHojd ...
     mainscreenIndragHojd mainscreenIndragBredd mainscreenHojd mainscreenBredd mainscreenPosX mainscreenPosY ...
     knappBredd knappHojd ...
-    previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY
+    previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY ...
+    fontStorlek
 
 skarmStorlek = get(groot, 'ScreenSize');
 skarmBredd = skarmStorlek(3);
@@ -35,7 +36,11 @@ previewMenuHojd = skarmHojd*(9/10);
 previewMenuPosX = skarmBredd/2 - previewMenuBredd/2;
 previewMenuPosY = skarmHojd/3;
 
-%previewMenuKnappPosX = 10;
-%previewMenuKnappPosY = previewMenuHojd/2 + knappHojd*(2/3);
+% --- Font ---
+if (ismac)
+    fontStorlek = 12;
+else
+    fontStorlek = 10;
+end
 
 

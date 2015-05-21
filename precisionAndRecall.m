@@ -23,13 +23,14 @@ hold on
 rgbVarden = impixel(segmenteradBild,rad,kolumn); 
 
 % Skapar en vektor med rader och kolumner som har önskade RGB-värden.
+% ERHÅLLNA från segmenteringen
 [onskadeRader, onskadeKolumner] = find((segmenteradBild(:,:,3) == rgbVarden(3)) & (segmenteradBild(:,:,2) == rgbVarden(2)) & (segmenteradBild(:,:,1) == rgbVarden(1)));
 A = [onskadeRader, onskadeKolumner];
 
 title('Rita det område du vill jämföra med', ...
     'Fontsize', 25);
 
-% Endast referensbilden visas och användaren får rita ut område att jämföra med. 
+% Endast referensbilden visas och användaren får rita ut ÖNSKAT område att jämföra med. 
 handleBild = imshow(referensbild);
 handleOmrade = imfreehand(gca);
 
@@ -37,11 +38,11 @@ handleOmrade = imfreehand(gca);
 binarBild = createMask(handleOmrade, handleBild);
 
 [o, p] = find(binarBild == 1);
-B = [o,p]; %vektor ERHÅLLNA
+B = [o,p]; %vektor ÖNSKADE
 C = intersect(A,B, 'rows'); %SNITTET mellan önskade och erhållna
 
-precision = size(C,1)/size(B,1);
-recall = size(C,1)/size(A,1);
+precision = size(C,1)/size(A,1);
+recall = size(C,1)/size(B,1);
 hold off
 close;
 
