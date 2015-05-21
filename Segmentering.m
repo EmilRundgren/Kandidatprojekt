@@ -33,7 +33,7 @@ end
 
 %Watershed
 if (choice == 2)
-    prompt = {'Ange parameter för strel:','Ta bort segment med färre pixlar än:'};
+    prompt = {'Ange parameter för rekonstruktionselement:','Ta bort segment med färre pixlar än:'};
     dlg_title = 'Ange parametrar för Watershed';
     num_lines = 1;
     def = {'4','10'};
