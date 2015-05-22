@@ -1,3 +1,6 @@
+% Funktion som fungerar exakt som MATLABs egna funktion menu men bl.a. har en annan
+% fontstorlek.
+
 function k = knappmeny(xHeader, varargin)
 %MENU   Generate a menu of choices for user input.
 %   CHOICE = MENU(HEADER, ITEM1, ITEM2, ... ) displays the HEADER

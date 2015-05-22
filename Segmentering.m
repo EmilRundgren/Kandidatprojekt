@@ -1,7 +1,7 @@
 
 % --------------- DELSYSTEM 2 - SEGMENTERING ---------------
 
-% Funktion som anropar önskad brushanteringsfunktion.
+% Funktion som anropar önskad segmenteringsfunktion.
 function [utbild, metod, sls] = Segmentering(inbild)
 
 % Om det inte finns någon inbild.

@@ -1,3 +1,6 @@
+% Funktion som används efter segmenteringsoperation för att låta användaren
+% bestämma vad som skall räknas som segment.
+
 function [utbild] = fuzzyLogicMenu(referensbild, segmenteradBild, sls)
 global previewMenuBredd previewMenuHojd previewMenuPosX previewMenuPosY
 

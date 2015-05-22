@@ -380,7 +380,7 @@ end
 pixel_value = impixel(grayimage,c,r);
 value = pixel_value(1);
 [n, m] = find(grayimage == value);
-B = [n,m]; %vektor ÖNSKADE
+B = [n,m];
 o = min(n);
 p = min(m);
 q = max(m);

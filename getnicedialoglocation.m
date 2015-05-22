@@ -1,3 +1,6 @@
+% Hjälpfunktion för egendefinierade menyfunktioner baserade på MATLABs egna
+% menyfunktioner.
+
 function figure_size = getnicedialoglocation(figure_size, figure_units)
 % adjust the specified figure position to fig nicely over GCBF
 % or into the upper 3rd of the screen
